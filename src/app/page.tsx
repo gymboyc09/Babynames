@@ -8,6 +8,8 @@ import { NumerologyCalculator } from '@/components/NumerologyCalculator';
 import { NameSuggestionEngine } from '@/components/NameSuggestionEngine';
 import { FavoritesList } from '@/components/FavoritesList';
 import { RecentCalculations } from '@/components/RecentCalculations';
+import DataManagement from '@/components/DataManagement';
+import DataSyncNotification from '@/components/DataSyncNotification';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Star } from 'lucide-react';
 
@@ -56,23 +58,14 @@ export default function Home() {
             </CardContent>
           </Card>
         )}
-        {activeTab === 'settings' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                Settings and preferences will be available here. This will include 
-                theme customization, language selection, and personal preferences.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        {activeTab === 'settings' && <DataManagement />}
       </main>
       
       {/* Mobile Navigation */}
       <MobileNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      {/* Data Sync Notification */}
+      <DataSyncNotification />
     </div>
   );
 }

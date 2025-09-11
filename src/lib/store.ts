@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { UserPreferences, NameAnalysis, SearchFilters, BirthData } from '@/types';
 
 interface AppState {
@@ -41,6 +41,11 @@ interface AppState {
   recentCalculations: NameAnalysis[];
   addToRecentCalculations: (analysis: NameAnalysis) => void;
   clearRecentCalculations: () => void;
+  
+  // Data management
+  exportData: () => string;
+  importData: (data: string) => boolean;
+  clearAllData: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -124,17 +129,83 @@ export const useAppStore = create<AppState>()(
         }),
       
       clearRecentCalculations: () =>
-        set({ recentCalculations: [] })
+        set({ recentCalculations: [] }),
+      
+      // Data management functions
+      exportData: () => {
+        const state = get();
+        const exportData = {
+          preferences: state.preferences,
+          favoriteNames: state.favoriteNames,
+          searchHistory: state.searchHistory,
+          recentCalculations: state.recentCalculations,
+          isDarkMode: state.isDarkMode,
+          exportDate: new Date().toISOString(),
+          version: '1.0'
+        };
+        return JSON.stringify(exportData, null, 2);
+      },
+      
+      importData: (data: string) => {
+        try {
+          const importedData = JSON.parse(data);
+          
+          // Validate the imported data structure
+          if (!importedData || typeof importedData !== 'object') {
+            return false;
+          }
+          
+          // Update state with imported data
+          set({
+            preferences: importedData.preferences || get().preferences,
+            favoriteNames: Array.isArray(importedData.favoriteNames) ? importedData.favoriteNames : [],
+            searchHistory: Array.isArray(importedData.searchHistory) ? importedData.searchHistory : [],
+            recentCalculations: Array.isArray(importedData.recentCalculations) ? importedData.recentCalculations : [],
+            isDarkMode: Boolean(importedData.isDarkMode)
+          });
+          
+          return true;
+        } catch (error) {
+          console.error('Failed to import data:', error);
+          return false;
+        }
+      },
+      
+      clearAllData: () => {
+        set({
+          preferences: {
+            savedNames: [],
+            favoriteOrigins: [],
+            preferredDifficulty: 'medium',
+            darkMode: false,
+            language: 'en'
+          },
+          favoriteNames: [],
+          searchHistory: [],
+          recentCalculations: [],
+          isDarkMode: false,
+          currentAnalysis: null,
+          searchFilters: {},
+          birthData: null,
+          isLoading: false
+        });
+      }
     }),
     {
       name: 'baby-names-storage',
+      storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         preferences: state.preferences,
         favoriteNames: state.favoriteNames,
         searchHistory: state.searchHistory,
         recentCalculations: state.recentCalculations,
         isDarkMode: state.isDarkMode
-      })
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          console.log('Data restored from localStorage');
+        }
+      }
     }
   )
 );
