@@ -89,6 +89,12 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies RouteHandlerConfig<"/api/prod-test">
 }
 
+// Validate ../../src/app/api/test-mongo-adapter/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/test-mongo-adapter/route.js")
+  handler satisfies RouteHandlerConfig<"/api/test-mongo-adapter">
+}
+
 // Validate ../../src/app/api/test/route.ts
 {
   const handler = {} as typeof import("../../src/app/api/test/route.js")
