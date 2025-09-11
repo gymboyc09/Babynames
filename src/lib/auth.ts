@@ -19,7 +19,8 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export const authOptions = {
-  adapter: clientPromise ? MongoDBAdapter(clientPromise as Promise<MongoClient>) : undefined,
+  // Temporarily disable adapter to test if it's causing the API route issues
+  // adapter: clientPromise ? MongoDBAdapter(clientPromise as Promise<MongoClient>) : undefined,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -27,9 +28,9 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }: { session: any; user: any }) {
-      if (session.user && user) {
-        session.user.id = user.id;
+    async session({ session, token }: { session: any; token: any }) {
+      if (session.user && token) {
+        session.user.id = token.id;
       }
       return session;
     },
@@ -44,7 +45,7 @@ export const authOptions = {
     signIn: '/auth/signin',
   },
   session: {
-    strategy: clientPromise ? 'database' as const : 'jwt' as const,
+    strategy: 'jwt' as const,
   },
   debug: process.env.NODE_ENV === 'development',
 };
