@@ -17,9 +17,7 @@ export const metadata: Metadata = {
   description: "Find the perfect baby name using numerology, phonology, and astrology principles. Get personalized name suggestions with detailed analysis and cultural insights.",
   keywords: "baby names, numerology, astrology, name suggestions, parenting, baby naming",
   authors: [{ name: "Baby Names Team" }],
-  viewport: "width=device-width, initial-scale=1",
   manifest: "/manifest.json",
-  themeColor: "#2563eb",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -28,6 +26,12 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false
   }
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#2563eb"
 };
 
 export default function RootLayout({
