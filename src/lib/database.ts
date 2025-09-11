@@ -1,10 +1,10 @@
 import { MongoClient, Db } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB = process.env.MONGODB_DB || 'babynames';
 
 if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+  console.warn('MONGODB_URI not found. Database operations will be disabled.');
 }
 
 let cached = global.mongo;
@@ -14,6 +14,10 @@ if (!cached) {
 }
 
 export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI is not configured');
+  }
+  
   if (cached.conn) {
     return cached.conn;
   }

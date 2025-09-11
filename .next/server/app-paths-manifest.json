@@ -1,10 +1,10 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/user/favorites/route": "app/api/user/favorites/route.js",
   "/api/user/data/route": "app/api/user/data/route.js",
   "/api/auth/[...nextauth]/route": "app/api/auth/[...nextauth]/route.js",
-  "/api/user/migrate/route": "app/api/user/migrate/route.js",
+  "/api/user/favorites/route": "app/api/user/favorites/route.js",
   "/api/user/recent/route": "app/api/user/recent/route.js",
+  "/api/user/migrate/route": "app/api/user/migrate/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js"
 }
