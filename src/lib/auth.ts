@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import GoogleProvider from 'next-auth/providers/google';
-import { MongoDBAdapter } from '@auth/mongodb-adapter';
-import { MongoClient } from 'mongodb';
+// import { MongoDBAdapter } from '@auth/mongodb-adapter';
+// import { MongoClient } from 'mongodb';
 
-const client = process.env.MONGODB_URI ? new MongoClient(process.env.MONGODB_URI) : null;
-const clientPromise = client ? client.connect() : null;
+// const client = process.env.MONGODB_URI ? new MongoClient(process.env.MONGODB_URI) : null;
+// const clientPromise = client ? client.connect() : null;
 
 // Debug logging for development only
 if (process.env.NODE_ENV === 'development') {
@@ -14,12 +14,13 @@ if (process.env.NODE_ENV === 'development') {
     hasGoogleClientSecret: !!process.env.GOOGLE_CLIENT_SECRET,
     hasNextAuthUrl: !!process.env.NEXTAUTH_URL,
     hasNextAuthSecret: !!process.env.NEXTAUTH_SECRET,
-    clientPromise: !!clientPromise
+    // clientPromise: !!clientPromise
   });
 }
 
 export const authOptions = {
-  adapter: clientPromise ? MongoDBAdapter(clientPromise as Promise<MongoClient>) : undefined,
+  // Temporarily disable adapter to test if it's causing the issue
+  // adapter: clientPromise ? MongoDBAdapter(clientPromise as Promise<MongoClient>) : undefined,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -27,9 +28,9 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }: { session: any; user: any }) {
-      if (session.user && user) {
-        session.user.id = user.id;
+    async session({ session, token }: { session: any; token: any }) {
+      if (session.user && token) {
+        session.user.id = token.id;
       }
       return session;
     },
@@ -44,7 +45,7 @@ export const authOptions = {
     signIn: '/auth/signin',
   },
   session: {
-    strategy: clientPromise ? 'database' as const : 'jwt' as const,
+    strategy: 'jwt' as const,
   },
   debug: process.env.NODE_ENV === 'development',
 };
