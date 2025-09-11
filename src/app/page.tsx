@@ -10,6 +10,7 @@ import { FavoritesList } from '@/components/FavoritesList';
 import { RecentCalculations } from '@/components/RecentCalculations';
 import DataManagement from '@/components/DataManagement';
 import DataSyncNotification from '@/components/DataSyncNotification';
+import DataMigration from '@/components/DataMigration';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Star } from 'lucide-react';
 
@@ -35,6 +36,9 @@ export default function Home() {
         <div className="hidden md:block">
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
+
+        {/* Data Migration Notice */}
+        <DataMigration />
 
         {/* Main Content */}
         {activeTab === 'calculator' && <NumerologyCalculator />}

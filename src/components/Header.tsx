@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
+import AuthButton from '@/components/AuthButton';
 import { Moon, Sun, Heart, History } from 'lucide-react';
 
 interface HeaderProps {
@@ -92,6 +93,9 @@ export const Header: React.FC<HeaderProps> = ({ onNavigateToFavorites, onNavigat
                 <Moon className="h-4 w-4" />
               )}
             </Button>
+
+            {/* Authentication */}
+            <AuthButton />
           </div>
         </div>
       </div>
