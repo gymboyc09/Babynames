@@ -53,6 +53,18 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies AppPageConfig<"/">
 }
 
+// Validate ../../src/app/api/auth-minimal/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/auth-minimal/route.js")
+  handler satisfies RouteHandlerConfig<"/api/auth-minimal">
+}
+
+// Validate ../../src/app/api/auth-simple-nextauth/route.ts
+{
+  const handler = {} as typeof import("../../src/app/api/auth-simple-nextauth/route.js")
+  handler satisfies RouteHandlerConfig<"/api/auth-simple-nextauth">
+}
+
 // Validate ../../src/app/api/auth-simple-test/route.ts
 {
   const handler = {} as typeof import("../../src/app/api/auth-simple-test/route.js")
