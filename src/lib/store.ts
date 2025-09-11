@@ -193,7 +193,16 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'baby-names-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        if (typeof window !== 'undefined') {
+          return localStorage;
+        }
+        return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {}
+        };
+      }),
       partialize: (state) => ({
         preferences: state.preferences,
         favoriteNames: state.favoriteNames,

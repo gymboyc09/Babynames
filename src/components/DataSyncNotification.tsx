@@ -7,6 +7,9 @@ export default function DataSyncNotification() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    // Only run in browser environment
+    if (typeof window === 'undefined') return;
+    
     // Listen for storage events to detect when data is saved
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'baby-names-storage') {
