@@ -75,12 +75,14 @@ export const FavoritesList: React.FC = () => {
               const phonology = analyzePhonology(name);
               
               return (
-                <Card
+                <div
                   key={name}
-                  variant="outlined"
                   className="cursor-pointer hover:shadow-md transition-shadow"
                   onClick={() => handleAnalyzeName(name)}
                 >
+                  <Card
+                    variant="outlined"
+                  >
                   <CardContent className="p-4">
                     <div className="text-center space-y-3">
                       {/* Name */}
@@ -158,7 +160,8 @@ export const FavoritesList: React.FC = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                  </Card>
+                </div>
               );
             })}
           </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { calculateNumerology, getNumerologicalMeaning } from '@/lib/numerology';
 import { analyzePhonology } from '@/lib/phonology';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -12,7 +12,44 @@ import { Calculator, Heart, Star, Info, Sparkles } from 'lucide-react';
 
 export const NumerologyCalculator: React.FC = () => {
   const [name, setName] = useState('');
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [analysis, setAnalysis] = useState<{
+    name: string;
+    numerology: {
+      chaldean: {
+        value: number;
+        breakdown: Array<{ letter: string; chaldeanValue: number }>;
+        isMasterNumber: boolean;
+        isSacredNumber: boolean;
+      };
+      pythagorean: {
+        value: number;
+        breakdown: Array<{ letter: string; pythagoreanValue: number }>;
+        isMasterNumber: boolean;
+      };
+    };
+    phonology: {
+      syllables: number;
+      pronunciation: string;
+      difficulty: string;
+      stressPattern: string;
+      phoneticTranscription: string;
+      nicknamePotential: string[];
+      vibration: {
+        type: string;
+        positiveCombinations: string[];
+        negativeCombinations: string[];
+        score: number;
+        numerologyWarning: boolean;
+      };
+    };
+    cultural: {
+      origin: string;
+      meaning: string;
+      popularity: number;
+      famousNamesakes: string[];
+      culturalSignificance: string;
+    };
+  } | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   
   const { setCurrentAnalysis, addToRecentCalculations, addToFavorites, isFavorite } = useAppStore();
@@ -108,7 +145,7 @@ export const NumerologyCalculator: React.FC = () => {
           <Card variant="elevated">
             <CardContent className="text-center py-8">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                "{analysis.name}"
+                &quot;{analysis.name}&quot;
               </h2>
               <p className="text-gray-600">Numerology Analysis</p>
             </CardContent>
@@ -145,7 +182,7 @@ export const NumerologyCalculator: React.FC = () => {
                   <div className="text-sm">
                     <div className="font-medium mb-2">Letter Breakdown:</div>
                     <div className="flex flex-wrap gap-1">
-                      {analysis.numerology.chaldean.breakdown.map((letter: any, index: number) => (
+                      {analysis.numerology.chaldean.breakdown.map((letter: { letter: string; chaldeanValue: number }, index: number) => (
                         <span
                           key={index}
                           className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs"
@@ -187,7 +224,7 @@ export const NumerologyCalculator: React.FC = () => {
                   <div className="text-sm">
                     <div className="font-medium mb-2">Letter Breakdown:</div>
                     <div className="flex flex-wrap gap-1">
-                      {analysis.numerology.pythagorean.breakdown.map((letter: any, index: number) => (
+                      {analysis.numerology.pythagorean.breakdown.map((letter: { letter: string; pythagoreanValue: number }, index: number) => (
                         <span
                           key={index}
                           className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded text-xs"

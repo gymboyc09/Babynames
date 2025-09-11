@@ -9,7 +9,7 @@ import { NameSuggestionEngine } from '@/components/NameSuggestionEngine';
 import { FavoritesList } from '@/components/FavoritesList';
 import { RecentCalculations } from '@/components/RecentCalculations';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Star, Heart, Calculator, Sparkles } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<NavigationTab>('calculator');

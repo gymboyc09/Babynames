@@ -42,7 +42,7 @@ export function generateId(): string {
 /**
  * Debounce function for search inputs
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
@@ -175,7 +175,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
 /**
  * Download data as JSON file
  */
-export function downloadJSON(data: any, filename: string): void {
+export function downloadJSON(data: unknown, filename: string): void {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

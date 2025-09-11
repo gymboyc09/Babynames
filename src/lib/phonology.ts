@@ -21,8 +21,8 @@ const NEGATIVE_WORDS = [
   'SAD', 'LOSS', 'SAT', 'DOWN', 'LESS', 'ILL'
 ];
 
-// Avoidable numerology numbers
-const AVOIDABLE_NUMBERS = [4, 7, 8, 13, 16, 17, 18, 22, 25, 26, 28, 29, 31, 35, 38, 40, 43, 44, 47, 48, 52, 53, 56, 61, 62, 80];
+// Avoidable numerology numbers (unused but kept for reference)
+// const AVOIDABLE_NUMBERS = [4, 7, 8, 13, 16, 17, 18, 22, 25, 26, 28, 29, 31, 35, 38, 40, 43, 44, 47, 48, 52, 53, 56, 61, 62, 80];
 
 /**
  * Analyze the phonology of a name
@@ -64,7 +64,7 @@ export function analyzePhonology(name: string, chaldeanValue?: number, pythagore
  */
 function countSyllables(word: string): number {
   // Remove silent 'e' at the end
-  let cleanWord = word.replace(/e$/, '');
+  const cleanWord = word.replace(/e$/, '');
   
   // Count vowel groups
   const vowelGroups = cleanWord.match(/[aeiouy]+/g);
@@ -308,8 +308,8 @@ function analyzeVibration(name: string, chaldeanValue?: number, pythagoreanValue
   }
   
   // Check for avoidable numerology numbers
-  const numerologyWarning = (chaldeanValue && isAvoidableNumber(chaldeanValue)) || 
-                           (pythagoreanValue && isAvoidableNumber(pythagoreanValue));
+  const numerologyWarning = Boolean((chaldeanValue && isAvoidableNumber(chaldeanValue)) || 
+                           (pythagoreanValue && isAvoidableNumber(pythagoreanValue)));
   
   return {
     type,

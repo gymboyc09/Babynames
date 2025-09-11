@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { calculateNumerology } from '@/lib/numerology';
 import { analyzePhonology } from '@/lib/phonology';
 import { SAMPLE_NAMES, CULTURAL_ORIGINS } from '@/data/names';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
 import { SearchFilters, NameSuggestion } from '@/types';
-import { Search, Filter, Heart, Star, Volume2, Share2 } from 'lucide-react';
+import { Search, Heart, Star, Volume2, Share2 } from 'lucide-react';
 
 export const NameSuggestionEngine: React.FC = () => {
   const [filters, setFilters] = useState<SearchFilters>({
@@ -206,7 +206,7 @@ export const NameSuggestionEngine: React.FC = () => {
                   value={filters.gender || 'any'}
                   onChange={(e) => setFilters({
                     ...filters,
-                    gender: e.target.value as any
+                    gender: e.target.value as 'male' | 'female' | 'unisex' | 'any'
                   })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -277,7 +277,7 @@ export const NameSuggestionEngine: React.FC = () => {
                   value={filters.difficulty || 'any'}
                   onChange={(e) => setFilters({
                     ...filters,
-                    difficulty: e.target.value as any
+                    difficulty: e.target.value as 'easy' | 'medium' | 'hard' | 'any'
                   })}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
@@ -314,13 +314,15 @@ export const NameSuggestionEngine: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {suggestions.map((suggestion, index) => (
-                <Card
+              {suggestions.map((suggestion) => (
+                <div
                   key={suggestion.name}
-                  variant="outlined"
                   className="cursor-pointer hover:shadow-md transition-shadow"
                   onClick={() => handleNameClick(suggestion)}
                 >
+                  <Card
+                    variant="outlined"
+                  >
                   <CardContent className="p-4">
                     <div className="text-center space-y-3">
                       {/* Name */}
@@ -397,7 +399,8 @@ export const NameSuggestionEngine: React.FC = () => {
                       </div>
                     </div>
                   </CardContent>
-                </Card>
+                  </Card>
+                </div>
               ))}
             </div>
             

@@ -112,19 +112,21 @@ export interface CardProps {
 
 export interface ButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   disabled?: boolean;
   className?: string;
+  title?: string;
 }
 
 export interface InputProps {
-  value: string;
+  value: string | number;
   onChange: (value: string) => void;
   placeholder?: string;
   type?: 'text' | 'email' | 'password' | 'number';
   disabled?: boolean;
   error?: string;
   className?: string;
+  id?: string;
 }
