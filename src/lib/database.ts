@@ -90,8 +90,8 @@ export async function updateUserData(userId: string, updates: Partial<UserData>)
       } 
     },
     { returnDocument: 'after' }
-  ) as UserData | null;
-  return result;
+  );
+  return result as unknown as UserData | null;
 }
 
 export async function deleteUserData(userId: string): Promise<boolean> {
