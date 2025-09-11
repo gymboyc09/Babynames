@@ -27,7 +27,7 @@ export const NameSuggestionEngine: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
-  const { addToFavorites, isFavorite, addToRecentCalculations } = useAppStore();
+  const { addToFavorites, removeFromFavorites, isFavorite, addToRecentCalculations } = useAppStore();
 
   // Filter and search names based on criteria
   const filteredSuggestions = useMemo(() => {
@@ -144,8 +144,7 @@ export const NameSuggestionEngine: React.FC = () => {
 
   const handleToggleFavorite = (name: string) => {
     if (isFavorite(name)) {
-      // Remove from favorites (this would need to be implemented in the store)
-      console.log('Remove from favorites:', name);
+      removeFromFavorites(name);
     } else {
       addToFavorites(name);
     }

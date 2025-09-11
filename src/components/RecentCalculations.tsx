@@ -4,32 +4,35 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAppStore } from '@/lib/store';
-// import { calculateNumerology } from '@/lib/numerology';
-// import { analyzePhonology } from '@/lib/phonology';
+import { calculateNumerology } from '@/lib/numerology';
+import { analyzePhonology } from '@/lib/phonology';
 import { History, Trash2, Star, Heart } from 'lucide-react';
 
 export const RecentCalculations: React.FC = () => {
-  const { recentCalculations, clearRecentCalculations, addToFavorites, isFavorite } = useAppStore();
+  const { recentCalculations, clearRecentCalculations, addToFavorites, removeFromFavorites, isFavorite, setCurrentAnalysis } = useAppStore();
 
   const handleAnalyzeName = (name: string) => {
-    // const numerology = calculateNumerology(name);
-    // const phonology = analyzePhonology(name);
+    const numerology = calculateNumerology(name);
+    const phonology = analyzePhonology(name);
     
-    // const analysis = {
-    //   name,
-    //   numerology,
-    //   phonology,
-    //   cultural: {
-    //     origin: 'Unknown',
-    //     meaning: 'To be determined',
-    //     popularity: 50,
-    //     famousNamesakes: [],
-    //     culturalSignificance: 'Analysis in progress'
-    //   }
-    // };
+    const analysis = {
+      name,
+      numerology,
+      phonology,
+      cultural: {
+        origin: 'Unknown',
+        meaning: 'To be determined',
+        popularity: 50,
+        famousNamesakes: [],
+        culturalSignificance: 'Analysis in progress'
+      }
+    };
     
-    // This would typically navigate back to calculator with the analysis
-    console.log('Analyze name:', name);
+    // Set as current analysis and navigate to calculator
+    setCurrentAnalysis(analysis);
+    
+    // Scroll to top to show the analysis
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (recentCalculations.length === 0) {
@@ -121,7 +124,7 @@ export const RecentCalculations: React.FC = () => {
                         onClick={(e) => {
                           e.stopPropagation();
                           if (isFavorite(analysis.name)) {
-                            console.log('Already in favorites');
+                            removeFromFavorites(analysis.name);
                           } else {
                             addToFavorites(analysis.name);
                           }

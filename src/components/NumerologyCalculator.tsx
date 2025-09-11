@@ -52,7 +52,7 @@ export const NumerologyCalculator: React.FC = () => {
   } | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
   
-  const { setCurrentAnalysis, addToRecentCalculations, addToFavorites, isFavorite } = useAppStore();
+  const { setCurrentAnalysis, addToRecentCalculations, addToFavorites, removeFromFavorites, isFavorite } = useAppStore();
 
   const handleCalculate = async () => {
     if (!name.trim()) return;
@@ -403,8 +403,7 @@ export const NumerologyCalculator: React.FC = () => {
             <Button
               onClick={() => {
                 if (isFavorite(analysis.name)) {
-                  // Already in favorites, could show a message or do nothing
-                  console.log('Already in favorites:', analysis.name);
+                  removeFromFavorites(analysis.name);
                 } else {
                   addToFavorites(analysis.name);
                 }
