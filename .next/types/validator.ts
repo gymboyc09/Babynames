@@ -53,30 +53,6 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies AppPageConfig<"/">
 }
 
-// Validate ../../src/app/api/auth-minimal/route.ts
-{
-  const handler = {} as typeof import("../../src/app/api/auth-minimal/route.js")
-  handler satisfies RouteHandlerConfig<"/api/auth-minimal">
-}
-
-// Validate ../../src/app/api/auth-simple-nextauth/route.ts
-{
-  const handler = {} as typeof import("../../src/app/api/auth-simple-nextauth/route.js")
-  handler satisfies RouteHandlerConfig<"/api/auth-simple-nextauth">
-}
-
-// Validate ../../src/app/api/auth-simple-test/route.ts
-{
-  const handler = {} as typeof import("../../src/app/api/auth-simple-test/route.js")
-  handler satisfies RouteHandlerConfig<"/api/auth-simple-test">
-}
-
-// Validate ../../src/app/api/auth-simple/route.ts
-{
-  const handler = {} as typeof import("../../src/app/api/auth-simple/route.js")
-  handler satisfies RouteHandlerConfig<"/api/auth-simple">
-}
-
 // Validate ../../src/app/api/auth-test/route.ts
 {
   const handler = {} as typeof import("../../src/app/api/auth-test/route.js")
@@ -89,22 +65,10 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   handler satisfies RouteHandlerConfig<"/api/auth/[...nextauth]">
 }
 
-// Validate ../../src/app/api/debug-auth/route.ts
-{
-  const handler = {} as typeof import("../../src/app/api/debug-auth/route.js")
-  handler satisfies RouteHandlerConfig<"/api/debug-auth">
-}
-
 // Validate ../../src/app/api/prod-test/route.ts
 {
   const handler = {} as typeof import("../../src/app/api/prod-test/route.js")
   handler satisfies RouteHandlerConfig<"/api/prod-test">
-}
-
-// Validate ../../src/app/api/test-mongo-adapter/route.ts
-{
-  const handler = {} as typeof import("../../src/app/api/test-mongo-adapter/route.js")
-  handler satisfies RouteHandlerConfig<"/api/test-mongo-adapter">
 }
 
 // Validate ../../src/app/api/test/route.ts

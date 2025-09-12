@@ -1,12 +1,7 @@
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './auth';
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from './auth'
 
-export async function getAuthenticatedUserId(): Promise<string | null> {
-  const session = await getServerSession(authOptions);
-  
-  if (!session || !(session as { user?: { id: string } }).user?.id) {
-    return null;
-  }
-  
-  return (session as { user: { id: string } }).user.id;
+export async function getAuthenticatedUserId() {
+  const session = await getServerSession(authOptions)
+  return (session?.user as { id?: string })?.id || null
 }
