@@ -7,6 +7,7 @@ export interface NumerologyResult {
     characteristics: string[];
     compatibility: string[];
     warnings: string[];
+    letterBreakdown: { letter: string; value: number }[];
   };
   chaldean: {
     totalValue: number;
@@ -15,6 +16,7 @@ export interface NumerologyResult {
     characteristics: string[];
     compatibility: string[];
     warnings: string[];
+    letterBreakdown: { letter: string; value: number }[];
   };
   coreNumbers: {
     lifePath: number;
@@ -52,17 +54,23 @@ export function calculateNumerology(name: string): NumerologyResult {
     's': 3, 't': 4, 'u': 6, 'v': 6, 'w': 6, 'x': 5, 'y': 1, 'z': 7
   };
 
-  // Calculate Pythagorean values
+  // Calculate Pythagorean values with letter breakdown
   let pythagoreanTotal = 0;
+  const pythagoreanBreakdown: { letter: string; value: number }[] = [];
   for (const letter of cleanName) {
-    pythagoreanTotal += pythagoreanValues[letter] || 0;
+    const value = pythagoreanValues[letter] || 0;
+    pythagoreanTotal += value;
+    pythagoreanBreakdown.push({ letter: letter.toUpperCase(), value });
   }
   const pythagoreanReduced = reduceToSingleDigit(pythagoreanTotal);
 
-  // Calculate Chaldean values
+  // Calculate Chaldean values with letter breakdown
   let chaldeanTotal = 0;
+  const chaldeanBreakdown: { letter: string; value: number }[] = [];
   for (const letter of cleanName) {
-    chaldeanTotal += chaldeanValues[letter] || 0;
+    const value = chaldeanValues[letter] || 0;
+    chaldeanTotal += value;
+    chaldeanBreakdown.push({ letter: letter.toUpperCase(), value });
   }
   const chaldeanReduced = reduceToSingleDigit(chaldeanTotal);
 
@@ -77,7 +85,8 @@ export function calculateNumerology(name: string): NumerologyResult {
       meaning: getNumerologyMeaning(pythagoreanReduced),
       characteristics: getCharacteristics(pythagoreanReduced),
       compatibility: getCompatibility(pythagoreanReduced),
-      warnings: getWarnings(pythagoreanReduced)
+      warnings: getWarnings(pythagoreanReduced),
+      letterBreakdown: pythagoreanBreakdown
     },
     chaldean: {
       totalValue: chaldeanTotal,
@@ -85,7 +94,8 @@ export function calculateNumerology(name: string): NumerologyResult {
       meaning: getNumerologyMeaning(chaldeanReduced),
       characteristics: getCharacteristics(chaldeanReduced),
       compatibility: getCompatibility(chaldeanReduced),
-      warnings: getWarnings(chaldeanReduced)
+      warnings: getWarnings(chaldeanReduced),
+      letterBreakdown: chaldeanBreakdown
     },
     coreNumbers
   };

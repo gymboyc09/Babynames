@@ -28,7 +28,7 @@ export async function connectToDatabase() {
 export async function getUserData(userId: string): Promise<UserData | null> {
   try {
     const { db } = await connectToDatabase();
-    const userData = await db.collection('userData').findOne({ userId });
+    const userData = await db.collection('userData').findOne({ id: userId });
     return userData as UserData | null;
   } catch (error) {
     console.error('Error fetching user data:', error);
@@ -51,7 +51,7 @@ export async function updateUserData(userId: string, updates: Partial<UserData>)
   try {
     const { db } = await connectToDatabase();
     await db.collection('userData').updateOne(
-      { userId },
+      { id: userId },
       { $set: { ...updates, updatedAt: new Date() } }
     );
     return true;
@@ -65,7 +65,7 @@ export async function addFavoriteName(userId: string, nameAnalysis: NameAnalysis
   try {
     const { db } = await connectToDatabase();
     await db.collection('userData').updateOne(
-      { userId },
+      { id: userId },
       { 
         $push: { favoriteNames: nameAnalysis },
         $set: { updatedAt: new Date() }
@@ -82,7 +82,7 @@ export async function removeFavoriteName(userId: string, nameId: string): Promis
   try {
     const { db } = await connectToDatabase();
     await db.collection('userData').updateOne(
-      { userId },
+      { id: userId },
       { 
         $pull: { favoriteNames: { id: nameId } },
         $set: { updatedAt: new Date() }
@@ -99,7 +99,7 @@ export async function addRecentCalculation(userId: string, nameAnalysis: NameAna
   try {
     const { db } = await connectToDatabase();
     await db.collection('userData').updateOne(
-      { userId },
+      { id: userId },
       { 
         $push: { recentCalculations: { $each: [nameAnalysis], $slice: -50 } },
         $set: { updatedAt: new Date() }
@@ -116,7 +116,7 @@ export async function removeRecentCalculation(userId: string, nameId: string): P
   try {
     const { db } = await connectToDatabase();
     await db.collection('userData').updateOne(
-      { userId },
+      { id: userId },
       { 
         $pull: { recentCalculations: { id: nameId } },
         $set: { updatedAt: new Date() }

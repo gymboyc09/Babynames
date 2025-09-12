@@ -47,6 +47,7 @@ export interface NameAnalysis {
       characteristics: string[];
       compatibility: string[];
       warnings: string[];
+      letterBreakdown: { letter: string; value: number }[];
     };
     chaldean: {
       totalValue: number;
@@ -55,6 +56,7 @@ export interface NameAnalysis {
       characteristics: string[];
       compatibility: string[];
       warnings: string[];
+      letterBreakdown: { letter: string; value: number }[];
     };
     coreNumbers: {
       lifePath: number;
@@ -75,6 +77,8 @@ export interface NameAnalysis {
       frequency: string;
       resonance: string;
       harmony: string;
+      score: number;
+      rating: string;
     };
     soundPatterns: {
       alliteration: string[];

@@ -11,6 +11,8 @@ export interface PhonologyResult {
     frequency: string;
     resonance: string;
     harmony: string;
+    score: number;
+    rating: string;
   };
   soundPatterns: {
     alliteration: string[];
@@ -65,11 +67,45 @@ function calculateVibrations(name: string) {
   if (vowelRatio > 0.5) harmony = 'Melodic';
   else if (vowelRatio < 0.3) harmony = 'Rhythmic';
   
+  // Calculate vibration score (0-100)
+  let score = 50; // Base score
+  
+  // Energy scoring
+  if (totalEnergy >= 10 && totalEnergy <= 20) score += 20;
+  else if (totalEnergy > 20) score += 10;
+  else score -= 10;
+  
+  // Frequency scoring
+  if (frequency === 'High') score += 15;
+  else if (frequency === 'Medium') score += 10;
+  else score += 5;
+  
+  // Resonance scoring
+  if (resonance === 'Strong') score += 15;
+  else if (resonance === 'Soft') score += 10;
+  else score += 5;
+  
+  // Harmony scoring
+  if (harmony === 'Melodic') score += 15;
+  else if (harmony === 'Balanced') score += 10;
+  else score += 5;
+  
+  // Ensure score is between 0-100
+  score = Math.max(0, Math.min(100, score));
+  
+  let rating = 'Poor';
+  if (score >= 80) rating = 'Excellent';
+  else if (score >= 70) rating = 'Good';
+  else if (score >= 60) rating = 'Fair';
+  else if (score >= 50) rating = 'Average';
+  
   return {
     energy: totalEnergy,
     frequency,
     resonance,
-    harmony
+    harmony,
+    score,
+    rating
   };
 }
 

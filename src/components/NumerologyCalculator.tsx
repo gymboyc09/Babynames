@@ -55,6 +55,11 @@ export function NumerologyCalculator() {
     }
   };
 
+  const handleClear = () => {
+    setName('');
+    setResult(null);
+  };
+
   const handleToggleFavorite = async () => {
     if (!result || !session) return;
     
@@ -105,13 +110,22 @@ export function NumerologyCalculator() {
                 className="text-lg"
               />
             </div>
-            <Button
-              onClick={handleAnalyze}
-              disabled={!name.trim() || isAnalyzing}
-              className="w-full"
-            >
-              {isAnalyzing ? 'Analyzing...' : 'Analyze Name'}
-            </Button>
+            <div className="flex space-x-2">
+              <Button
+                onClick={handleAnalyze}
+                disabled={!name.trim() || isAnalyzing}
+                className="flex-1"
+              >
+                {isAnalyzing ? 'Analyzing...' : 'Analyze Name'}
+              </Button>
+              <Button
+                onClick={handleClear}
+                variant="outline"
+                disabled={!name.trim() && !result}
+              >
+                Clear
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -140,7 +154,19 @@ export function NumerologyCalculator() {
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Pythagorean Numerology</h4>
                     <div className="space-y-2">
-                      <p><span className="font-medium">Total Value:</span> {result.numerology.pythagorean.totalValue}</p>
+                      <div>
+                        <span className="font-medium">Letter Breakdown:</span>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {result.numerology.pythagorean.letterBreakdown.map((item, index) => (
+                            <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded">
+                              {item.letter}({item.value})
+                            </span>
+                          ))}
+                          <span className="px-2 py-1 bg-blue-200 text-blue-900 text-sm rounded font-bold">
+                            = {result.numerology.pythagorean.totalValue}
+                          </span>
+                        </div>
+                      </div>
                       <p><span className="font-medium">Reduced Value:</span> {result.numerology.pythagorean.reducedValue}</p>
                       <p><span className="font-medium">Meaning:</span> {result.numerology.pythagorean.meaning}</p>
                     </div>
@@ -160,7 +186,19 @@ export function NumerologyCalculator() {
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Chaldean Numerology</h4>
                     <div className="space-y-2">
-                      <p><span className="font-medium">Total Value:</span> {result.numerology.chaldean.totalValue}</p>
+                      <div>
+                        <span className="font-medium">Letter Breakdown:</span>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          {result.numerology.chaldean.letterBreakdown.map((item, index) => (
+                            <span key={index} className="px-2 py-1 bg-purple-100 text-purple-800 text-sm rounded">
+                              {item.letter}({item.value})
+                            </span>
+                          ))}
+                          <span className="px-2 py-1 bg-purple-200 text-purple-900 text-sm rounded font-bold">
+                            = {result.numerology.chaldean.totalValue}
+                          </span>
+                        </div>
+                      </div>
                       <p><span className="font-medium">Reduced Value:</span> {result.numerology.chaldean.reducedValue}</p>
                       <p><span className="font-medium">Meaning:</span> {result.numerology.chaldean.meaning}</p>
                     </div>
@@ -216,6 +254,17 @@ export function NumerologyCalculator() {
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Vibrations</h4>
                     <div className="space-y-2">
+                      <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Vibration Score:</span>
+                          <span className="text-2xl font-bold text-blue-600">{result.phonology.vibrations.score}/100</span>
+                        </div>
+                        <div className="mt-1">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded">
+                            {result.phonology.vibrations.rating}
+                          </span>
+                        </div>
+                      </div>
                       <p><span className="font-medium">Energy Level:</span> {result.phonology.vibrations.energy}</p>
                       <p><span className="font-medium">Frequency:</span> {result.phonology.vibrations.frequency}</p>
                       <p><span className="font-medium">Resonance:</span> {result.phonology.vibrations.resonance}</p>
