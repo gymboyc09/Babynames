@@ -290,6 +290,52 @@ export function NumerologyCalculator() {
                     </div>
                   </div>
                   
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-3">Vibratory Name Science</h4>
+                    <div className="space-y-3">
+                      <div className="p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Overall Vibration:</span>
+                          <span className={`px-2 py-1 text-sm rounded font-bold ${
+                            result.phonology.vibratoryScience.overallVibration === 'Positive' 
+                              ? 'bg-green-100 text-green-800' 
+                              : result.phonology.vibratoryScience.overallVibration === 'Negative'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {result.phonology.vibratoryScience.overallVibration}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {result.phonology.vibratoryScience.positiveCombinations.length > 0 && (
+                        <div>
+                          <h5 className="font-medium text-green-700 mb-2">Positive Combinations Found:</h5>
+                          <div className="flex flex-wrap gap-1">
+                            {result.phonology.vibratoryScience.positiveCombinations.map((combo, index) => (
+                              <span key={index} className="px-2 py-1 bg-green-100 text-green-800 text-sm rounded">
+                                {combo}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {result.phonology.vibratoryScience.negativeCombinations.length > 0 && (
+                        <div>
+                          <h5 className="font-medium text-red-700 mb-2">Negative Combinations Found:</h5>
+                          <div className="flex flex-wrap gap-1">
+                            {result.phonology.vibratoryScience.negativeCombinations.map((combo, index) => (
+                              <span key={index} className="px-2 py-1 bg-red-100 text-red-800 text-sm rounded">
+                                {combo}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
                   {result.phonology.culturalNotes.length > 0 && (
                     <div>
                       <h4 className="font-semibold text-gray-900 mb-3">Cultural Notes</h4>

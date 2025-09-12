@@ -89,7 +89,7 @@ export function RecentCalculations() {
                       {calculation.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {formatDate(calculation.timestamp)}
+                      {formatDate(new Date(calculation.timestamp))}
                     </p>
                     <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
                       <div>

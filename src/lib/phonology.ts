@@ -20,6 +20,12 @@ export interface PhonologyResult {
     rhythm: string;
     flow: string;
   };
+  vibratoryScience: {
+    positiveCombinations: string[];
+    negativeCombinations: string[];
+    overallVibration: 'Positive' | 'Negative' | 'Neutral';
+    avoidableNumbers: number[];
+  };
 }
 
 export function analyzePhonology(name: string): PhonologyResult {
@@ -35,6 +41,7 @@ export function analyzePhonology(name: string): PhonologyResult {
   const culturalNotes = getCulturalNotes(cleanName);
   const vibrations = calculateVibrations(cleanName);
   const soundPatterns = analyzeSoundPatterns(cleanName);
+  const vibratoryScience = analyzeVibratoryScience(cleanName);
 
   return {
     name: name,
@@ -45,7 +52,8 @@ export function analyzePhonology(name: string): PhonologyResult {
     pronunciation,
     culturalNotes,
     vibrations,
-    soundPatterns
+    soundPatterns,
+    vibratoryScience
   };
 }
 
@@ -143,6 +151,50 @@ function analyzeSoundPatterns(name: string) {
     assonance,
     rhythm,
     flow
+  };
+}
+
+function analyzeVibratoryScience(name: string) {
+  const positiveCombinations = [
+    'VS', 'VN', 'WN', 'VG', 'VB', 'VM', 'NV', 'MG', 'MK', 'MV', 'SA', 'KS', 'MY', 'PM', 'SV', 'GA', 'AR', 'RA', 'RP', 'JN', 'AV', 'JA', 'PN', 'CO', 'CP', 'PC', 'MN', 'NM', 'AM', 'RS', 'DA', 'AD', 'BA', 'GV', 'CV', 'LK', 'LV', 'AG', 'PK', 'AP', 'AN', 'ARR', 'HA', 'MP', 'VIN', 'VIND', 'ARARS', 'NJ', 'NS', 'UD', 'RUN', 'GAIN'
+  ];
+  
+  const negativeCombinations = [
+    'VK', 'WAR', 'VH', 'VD', 'VO', 'NO', 'DI', 'DHI', 'AS', 'SH', 'ML', 'MAR', 'KL', 'SR', 'SS', 'AH', 'AI', 'LO', 'RO', 'SC', 'SK', 'SU', 'END', 'VAR', 'NL', 'VL', 'BO', 'DU', 'MR', 'VR', 'VC', 'DY', 'NA', 'NE', 'NI', 'MT', 'RJ', 'JR', 'OO', 'AK', 'IL', 'ER', 'KK', 'DM', 'SAD', 'LOSS', 'SAT', 'DOWN', 'LESS', 'ILL'
+  ];
+  
+  const avoidableNumbers = [4, 7, 8, 13, 16, 17, 18, 22, 25, 26, 28, 29, 31, 35, 38, 40, 43, 44, 47, 48, 52, 53, 56, 61, 62, 80];
+  
+  const foundPositive: string[] = [];
+  const foundNegative: string[] = [];
+  
+  // Check for positive combinations
+  for (const combo of positiveCombinations) {
+    if (name.toUpperCase().includes(combo)) {
+      foundPositive.push(combo);
+    }
+  }
+  
+  // Check for negative combinations
+  for (const combo of negativeCombinations) {
+    if (name.toUpperCase().includes(combo)) {
+      foundNegative.push(combo);
+    }
+  }
+  
+  // Determine overall vibration
+  let overallVibration: 'Positive' | 'Negative' | 'Neutral' = 'Neutral';
+  if (foundPositive.length > foundNegative.length) {
+    overallVibration = 'Positive';
+  } else if (foundNegative.length > foundPositive.length) {
+    overallVibration = 'Negative';
+  }
+  
+  return {
+    positiveCombinations: foundPositive,
+    negativeCombinations: foundNegative,
+    overallVibration,
+    avoidableNumbers
   };
 }
 

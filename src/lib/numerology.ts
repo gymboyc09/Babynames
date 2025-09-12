@@ -134,8 +134,18 @@ function getLetterValue(letter: string): number {
 }
 
 function reduceToSingleDigit(num: number): number {
+  // Master numbers (11, 22, 33, 44) should not be reduced
+  const masterNumbers = [11, 22, 33, 44];
+  if (masterNumbers.includes(num)) {
+    return num;
+  }
+  
   while (num > 9) {
     num = num.toString().split('').reduce((sum, digit) => sum + parseInt(digit), 0);
+    // Check if the result is a master number
+    if (masterNumbers.includes(num)) {
+      return num;
+    }
   }
   return num;
 }
@@ -150,7 +160,11 @@ function getNumerologyMeaning(value: number): string {
     6: "Responsibility, nurturing, and balance",
     7: "Spirituality, analysis, and wisdom",
     8: "Ambition, material success, and authority",
-    9: "Humanitarianism, completion, and wisdom"
+    9: "Humanitarianism, completion, and wisdom",
+    11: "Intuitive, inspirational, and visionary (Master Number)",
+    22: "Master builder, practical visionary (Master Number)",
+    33: "Master teacher, compassionate healer (Master Number)",
+    44: "Master healer, practical idealist (Master Number)"
   };
   return meanings[value] || "Unknown meaning";
 }

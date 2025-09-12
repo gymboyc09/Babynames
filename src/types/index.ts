@@ -86,6 +86,12 @@ export interface NameAnalysis {
       rhythm: string;
       flow: string;
     };
+    vibratoryScience: {
+      positiveCombinations: string[];
+      negativeCombinations: string[];
+      overallVibration: 'Positive' | 'Negative' | 'Neutral';
+      avoidableNumbers: number[];
+    };
   };
   timestamp: Date;
   isFavorite?: boolean;
