@@ -70,7 +70,7 @@ export default function Home() {
         </div>
 
         {/* Navigation */}
-        <div className="hidden md:block">
+        <div className="hidden md:block mb-8">
           <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
