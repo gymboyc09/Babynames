@@ -7,7 +7,8 @@ const client = new MongoClient(process.env.MONGODB_URI!)
 const clientPromise = client.connect()
 
 export const authOptions = {
-  adapter: MongoDBAdapter(clientPromise),
+  // Temporarily disable adapter to test
+  // adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -15,7 +16,7 @@ export const authOptions = {
     }),
   ],
   session: {
-    strategy: 'database' as const,
+    strategy: 'jwt' as const,
   },
   pages: {
     signIn: '/auth/signin',
