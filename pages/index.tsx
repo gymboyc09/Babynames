@@ -1,74 +1,55 @@
-import React, { useState } from 'react'
-import { Header } from '@/components/Header'
-import { Navigation, NavigationTab } from '@/components/Navigation'
-import { MobileNavigation } from '@/components/MobileNavigation'
-import { NumerologyCalculator } from '@/components/NumerologyCalculator'
-import { NameSuggestionEngine } from '@/components/NameSuggestionEngine'
-import { FavoritesList } from '@/components/FavoritesList'
-import { RecentCalculations } from '@/components/RecentCalculations'
-import DataManagement from '@/components/DataManagement'
-import DataSyncNotification from '@/components/DataSyncNotification'
-import DataMigration from '@/components/DataMigration'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
-import { Star } from 'lucide-react'
+import { useSession, signIn, signOut } from "next-auth/react"
+import { useState } from "react"
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<NavigationTab>('calculator')
-  
+  const { data: session, status } = useSession()
+  const [loading, setLoading] = useState(false)
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header 
-        onNavigateToFavorites={() => setActiveTab('favorites')}
-        onNavigateToHistory={() => setActiveTab('history')}
-      />
-      
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 md:pb-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            Find the Perfect
-            <span className="text-blue-600"> Baby Name</span>
-          </h1>
-        </div>
-
-        {/* Navigation */}
-        <div className="hidden md:block">
-          <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-        </div>
-
-        {/* Data Migration Notice */}
-        <DataMigration />
-
-        {/* Main Content */}
-        {activeTab === 'calculator' && <NumerologyCalculator />}
-        {activeTab === 'suggestions' && <NameSuggestionEngine />}
-        {activeTab === 'favorites' && <FavoritesList />}
-        {activeTab === 'history' && <RecentCalculations />}
-        {activeTab === 'astrology' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-600" />
-                Astrology Integration
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                Astrology features are coming soon! This will include birth chart analysis, 
-                astrological compatibility with names, and personalized recommendations 
-                based on planetary positions.
-              </p>
-            </CardContent>
-          </Card>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Baby Names App
+        </h1>
+        
+        {session ? (
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">
+              Welcome, {session.user?.name}!
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Email: {session.user?.email}
+            </p>
+            <button
+              onClick={() => signOut()}
+              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
+            >
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <div className="text-center">
+            <p className="text-gray-600 mb-4">
+              Sign in to access your baby names
+            </p>
+            <button
+              onClick={() => signIn("google")}
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
+            >
+              {loading ? "Signing in..." : "Sign in with Google"}
+            </button>
+          </div>
         )}
-        {activeTab === 'settings' && <DataManagement />}
-      </main>
-      
-      {/* Mobile Navigation */}
-      <MobileNavigation activeTab={activeTab} onTabChange={setActiveTab} />
-      
-      {/* Data Sync Notification */}
-      <DataSyncNotification />
+      </div>
     </div>
   )
 }

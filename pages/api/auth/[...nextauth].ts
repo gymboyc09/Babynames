@@ -1,4 +1,4 @@
-import NextAuth from "next-auth/next"
+import NextAuth from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 
 export default NextAuth({
@@ -15,15 +15,4 @@ export default NextAuth({
     signIn: "/auth/signin",
   },
   debug: false,
-  logger: {
-    error: (code, metadata) => {
-      console.error('NextAuth Error:', code, metadata)
-    },
-    warn: (code) => {
-      console.warn('NextAuth Warning:', code)
-    },
-    debug: (code, metadata) => {
-      console.log('NextAuth Debug:', code, metadata)
-    }
-  }
 })
