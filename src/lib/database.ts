@@ -64,6 +64,8 @@ export async function updateUserData(userId: string, updates: Partial<UserData>)
 export async function addFavoriteName(userId: string, nameAnalysis: NameAnalysis): Promise<boolean> {
   try {
     const { db } = await connectToDatabase();
+    
+    // Add to favorites
     await db.collection('userData').updateOne(
       { id: userId },
       { 
@@ -71,6 +73,18 @@ export async function addFavoriteName(userId: string, nameAnalysis: NameAnalysis
         $set: { updatedAt: new Date() }
       }
     );
+    
+    // Mark as favorite in recent calculations
+    await db.collection('userData').updateOne(
+      { id: userId, 'recentCalculations.id': nameAnalysis.id },
+      { 
+        $set: { 
+          'recentCalculations.$.isFavorite': true,
+          updatedAt: new Date() 
+        }
+      }
+    );
+    
     return true;
   } catch (error) {
     console.error('Error adding favorite name:', error);
@@ -81,6 +95,8 @@ export async function addFavoriteName(userId: string, nameAnalysis: NameAnalysis
 export async function removeFavoriteName(userId: string, nameId: string): Promise<boolean> {
   try {
     const { db } = await connectToDatabase();
+    
+    // Remove from favorites
     await db.collection('userData').updateOne(
       { id: userId },
       { 
@@ -88,6 +104,18 @@ export async function removeFavoriteName(userId: string, nameId: string): Promis
         $set: { updatedAt: new Date() }
       }
     );
+    
+    // Mark as not favorite in recent calculations
+    await db.collection('userData').updateOne(
+      { id: userId, 'recentCalculations.id': nameId },
+      { 
+        $set: { 
+          'recentCalculations.$.isFavorite': false,
+          updatedAt: new Date() 
+        }
+      }
+    );
+    
     return true;
   } catch (error) {
     console.error('Error removing favorite name:', error);

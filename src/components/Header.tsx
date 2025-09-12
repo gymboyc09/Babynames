@@ -2,12 +2,9 @@ import React from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { Button } from './ui/button';
 
-interface HeaderProps {
-  onNavigateToFavorites: () => void;
-  onNavigateToHistory: () => void;
-}
+interface HeaderProps {}
 
-export function Header({ onNavigateToFavorites, onNavigateToHistory }: HeaderProps) {
+export function Header({}: HeaderProps) {
   const { data: session } = useSession();
 
   return (
@@ -22,34 +19,18 @@ export function Header({ onNavigateToFavorites, onNavigateToHistory }: HeaderPro
           
           <div className="flex items-center space-x-4">
             {session ? (
-              <>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-700">
+                  {session.user?.name}
+                </span>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={onNavigateToFavorites}
+                  onClick={() => signOut()}
                 >
-                  Favorites
+                  Sign Out
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onNavigateToHistory}
-                >
-                  History
-                </Button>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-700">
-                    {session.user?.name}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => signOut()}
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              </>
+              </div>
             ) : (
               <div className="text-sm text-gray-500">
                 Sign in to save your favorites

@@ -32,17 +32,48 @@ export function RecentCalculations() {
     console.log('Analyzing name:', name);
   };
 
-  const handleToggleFavorite = (id: string) => {
-    setRecentCalculations(prev => 
-      prev.map(calc => 
-        calc.id === id 
-          ? { ...calc, isFavorite: !calc.isFavorite }
-          : calc
-      )
-    );
-    // TODO: Update in database
-    if (session) {
-      console.log('Toggling favorite for calculation:', id);
+  const handleToggleFavorite = async (id: string) => {
+    if (!session) return;
+    
+    const calculation = recentCalculations.find(calc => calc.id === id);
+    if (!calculation) return;
+    
+    try {
+      if (calculation.isFavorite) {
+        // Remove from favorites
+        const response = await fetch('/api/user/favorites', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nameId: id })
+        });
+        if (response.ok) {
+          setRecentCalculations(prev => 
+            prev.map(calc => 
+              calc.id === id 
+                ? { ...calc, isFavorite: false }
+                : calc
+            )
+          );
+        }
+      } else {
+        // Add to favorites
+        const response = await fetch('/api/user/favorites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(calculation)
+        });
+        if (response.ok) {
+          setRecentCalculations(prev => 
+            prev.map(calc => 
+              calc.id === id 
+                ? { ...calc, isFavorite: true }
+                : calc
+            )
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
     }
   };
 

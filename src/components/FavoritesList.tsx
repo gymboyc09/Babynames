@@ -36,6 +36,7 @@ export function FavoritesList() {
         });
         if (response.ok) {
           setFavorites(prev => prev.filter(fav => fav.id !== id));
+          // The name will remain in recent calculations but marked as not favorite
         }
       } catch (error) {
         console.error('Error removing favorite:', error);
