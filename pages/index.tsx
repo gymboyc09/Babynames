@@ -1,21 +1,20 @@
-'use client';
-
-import React, { useState } from 'react';
-import { Header } from '@/components/Header';
-import { Navigation, NavigationTab } from '@/components/Navigation';
-import { MobileNavigation } from '@/components/MobileNavigation';
-import { NumerologyCalculator } from '@/components/NumerologyCalculator';
-import { NameSuggestionEngine } from '@/components/NameSuggestionEngine';
-import { FavoritesList } from '@/components/FavoritesList';
-import { RecentCalculations } from '@/components/RecentCalculations';
-import DataManagement from '@/components/DataManagement';
-import DataSyncNotification from '@/components/DataSyncNotification';
-import DataMigration from '@/components/DataMigration';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Star } from 'lucide-react';
+import React, { useState } from 'react'
+import { Header } from '@/components/Header'
+import { Navigation, NavigationTab } from '@/components/Navigation'
+import { MobileNavigation } from '@/components/MobileNavigation'
+import { NumerologyCalculator } from '@/components/NumerologyCalculator'
+import { NameSuggestionEngine } from '@/components/NameSuggestionEngine'
+import { FavoritesList } from '@/components/FavoritesList'
+import { RecentCalculations } from '@/components/RecentCalculations'
+import DataManagement from '@/components/DataManagement'
+import DataSyncNotification from '@/components/DataSyncNotification'
+import DataMigration from '@/components/DataMigration'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Star } from 'lucide-react'
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<NavigationTab>('calculator');
+  const [activeTab, setActiveTab] = useState<NavigationTab>('calculator')
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Header 
@@ -71,5 +70,5 @@ export default function Home() {
       {/* Data Sync Notification */}
       <DataSyncNotification />
     </div>
-  );
+  )
 }
