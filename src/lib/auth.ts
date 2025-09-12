@@ -1,14 +1,13 @@
 import NextAuth from 'next-auth/next'
 import GoogleProvider from 'next-auth/providers/google'
-import { MongoDBAdapter } from '@auth/mongodb-adapter'
+import { MongoDBAdapter } from '@next-auth/mongodb-adapter'
 import { MongoClient } from 'mongodb'
 
 const client = new MongoClient(process.env.MONGODB_URI!)
 const clientPromise = client.connect()
 
 export const authOptions = {
-  // Temporarily disable adapter to test
-  // adapter: MongoDBAdapter(clientPromise),
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -16,10 +15,18 @@ export const authOptions = {
     }),
   ],
   session: {
-    strategy: 'jwt' as const,
+    strategy: 'database' as const,
   },
   pages: {
     signIn: '/auth/signin',
+  },
+  callbacks: {
+    async session({ session, user }: { session: any; user: any }) {
+      if (session.user && user) {
+        session.user.id = user.id
+      }
+      return session
+    },
   },
 }
 

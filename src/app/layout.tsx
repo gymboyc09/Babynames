@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import SessionProvider from "@/components/SessionProvider";
+import ClientSessionProvider from "@/components/SessionProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -40,11 +40,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} antialiased h-full bg-gray-50`}
       >
-        <SessionProvider>
+        <ClientSessionProvider>
           <div className="min-h-full">
             {children}
           </div>
-        </SessionProvider>
+        </ClientSessionProvider>
       </body>
     </html>
   );
