@@ -8,19 +8,38 @@ export function FavoritesList() {
   const { data: session } = useSession();
   const [favorites, setFavorites] = useState<NameAnalysis[]>([]);
 
-  // TODO: Load favorites from database
+  // Load favorites from database
   React.useEffect(() => {
-    if (session) {
-      // Load favorites from database
-      console.log('Loading favorites for user:', session.user?.email);
-    }
+    const loadFavorites = async () => {
+      if (session) {
+        try {
+          const response = await fetch('/api/user/data');
+          if (response.ok) {
+            const userData = await response.json();
+            setFavorites(userData.favoriteNames || []);
+          }
+        } catch (error) {
+          console.error('Error loading favorites:', error);
+        }
+      }
+    };
+    loadFavorites();
   }, [session]);
 
-  const handleRemoveFavorite = (id: string) => {
-    setFavorites(prev => prev.filter(fav => fav.id !== id));
-    // TODO: Remove from database
+  const handleRemoveFavorite = async (id: string) => {
     if (session) {
-      console.log('Removing favorite:', id);
+      try {
+        const response = await fetch('/api/user/favorites', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nameId: id })
+        });
+        if (response.ok) {
+          setFavorites(prev => prev.filter(fav => fav.id !== id));
+        }
+      } catch (error) {
+        console.error('Error removing favorite:', error);
+      }
     }
   };
 
@@ -65,14 +84,17 @@ export function FavoritesList() {
                     </h3>
                     <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium">Numerology:</span> {favorite.numerology.reducedValue}
+                        <span className="font-medium">Pythagorean:</span> {favorite.numerology.pythagorean.reducedValue}
+                      </div>
+                      <div>
+                        <span className="font-medium">Chaldean:</span> {favorite.numerology.chaldean.reducedValue}
                       </div>
                       <div>
                         <span className="font-medium">Syllables:</span> {favorite.phonology.syllables}
                       </div>
                     </div>
                     <div className="mt-2">
-                      <span className="font-medium">Meaning:</span> {favorite.numerology.meaning}
+                      <span className="font-medium">Meaning:</span> {favorite.numerology.pythagorean.meaning}
                     </div>
                   </div>
                   <div className="flex space-x-2 ml-4">

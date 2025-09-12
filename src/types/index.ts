@@ -40,12 +40,28 @@ export interface NameAnalysis {
   id: string;
   name: string;
   numerology: {
-    totalValue: number;
-    reducedValue: number;
-    meaning: string;
-    characteristics: string[];
-    compatibility: string[];
-    warnings: string[];
+    pythagorean: {
+      totalValue: number;
+      reducedValue: number;
+      meaning: string;
+      characteristics: string[];
+      compatibility: string[];
+      warnings: string[];
+    };
+    chaldean: {
+      totalValue: number;
+      reducedValue: number;
+      meaning: string;
+      characteristics: string[];
+      compatibility: string[];
+      warnings: string[];
+    };
+    coreNumbers: {
+      lifePath: number;
+      destiny: number;
+      soul: number;
+      personality: number;
+    };
   };
   phonology: {
     syllables: number;
@@ -54,6 +70,18 @@ export interface NameAnalysis {
     phoneticAnalysis: string;
     pronunciation: string;
     culturalNotes: string[];
+    vibrations: {
+      energy: number;
+      frequency: string;
+      resonance: string;
+      harmony: string;
+    };
+    soundPatterns: {
+      alliteration: string[];
+      assonance: string[];
+      rhythm: string;
+      flow: string;
+    };
   };
   timestamp: Date;
   isFavorite?: boolean;

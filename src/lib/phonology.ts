@@ -6,6 +6,18 @@ export interface PhonologyResult {
   phoneticAnalysis: string;
   pronunciation: string;
   culturalNotes: string[];
+  vibrations: {
+    energy: number;
+    frequency: string;
+    resonance: string;
+    harmony: string;
+  };
+  soundPatterns: {
+    alliteration: string[];
+    assonance: string[];
+    rhythm: string;
+    flow: string;
+  };
 }
 
 export function analyzePhonology(name: string): PhonologyResult {
@@ -19,6 +31,8 @@ export function analyzePhonology(name: string): PhonologyResult {
   const phoneticAnalysis = getPhoneticAnalysis(cleanName);
   const pronunciation = getPronunciation(cleanName);
   const culturalNotes = getCulturalNotes(cleanName);
+  const vibrations = calculateVibrations(cleanName);
+  const soundPatterns = analyzeSoundPatterns(cleanName);
 
   return {
     name: name,
@@ -27,7 +41,72 @@ export function analyzePhonology(name: string): PhonologyResult {
     consonantCount,
     phoneticAnalysis,
     pronunciation,
-    culturalNotes
+    culturalNotes,
+    vibrations,
+    soundPatterns
+  };
+}
+
+function calculateVibrations(name: string) {
+  const vowelEnergy = name.split('').filter(char => 'aeiou'.includes(char)).length * 2;
+  const consonantEnergy = name.split('').filter(char => 'bcdfghjklmnpqrstvwxyz'.includes(char)).length;
+  const totalEnergy = vowelEnergy + consonantEnergy;
+  
+  let frequency = 'Low';
+  if (totalEnergy > 15) frequency = 'High';
+  else if (totalEnergy > 10) frequency = 'Medium';
+  
+  let resonance = 'Gentle';
+  if (name.includes('r') || name.includes('l')) resonance = 'Strong';
+  if (name.includes('m') || name.includes('n')) resonance = 'Soft';
+  
+  let harmony = 'Balanced';
+  const vowelRatio = name.split('').filter(char => 'aeiou'.includes(char)).length / name.length;
+  if (vowelRatio > 0.5) harmony = 'Melodic';
+  else if (vowelRatio < 0.3) harmony = 'Rhythmic';
+  
+  return {
+    energy: totalEnergy,
+    frequency,
+    resonance,
+    harmony
+  };
+}
+
+function analyzeSoundPatterns(name: string) {
+  const alliteration: string[] = [];
+  const assonance: string[] = [];
+  
+  // Check for alliteration (consecutive same consonants)
+  for (let i = 0; i < name.length - 1; i++) {
+    if (name[i] === name[i + 1] && 'bcdfghjklmnpqrstvwxyz'.includes(name[i])) {
+      alliteration.push(`${name[i]}${name[i + 1]}`);
+    }
+  }
+  
+  // Check for assonance (consecutive same vowels)
+  for (let i = 0; i < name.length - 1; i++) {
+    if (name[i] === name[i + 1] && 'aeiou'.includes(name[i])) {
+      assonance.push(`${name[i]}${name[i + 1]}`);
+    }
+  }
+  
+  // Determine rhythm
+  let rhythm = 'Steady';
+  const syllableCount = countSyllables(name);
+  if (syllableCount > 3) rhythm = 'Complex';
+  else if (syllableCount === 1) rhythm = 'Simple';
+  
+  // Determine flow
+  let flow = 'Smooth';
+  if (name.includes('x') || name.includes('z')) flow = 'Sharp';
+  if (name.includes('l') || name.includes('m')) flow = 'Flowing';
+  
+  return {
+    alliteration,
+    assonance,
+    rhythm,
+    flow
   };
 }
 

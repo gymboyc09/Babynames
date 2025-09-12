@@ -184,15 +184,15 @@ export function NameSuggestionEngine() {
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3">Numerology</h4>
                 <div className="space-y-2">
-                  <p><span className="font-medium">Total Value:</span> {analysis.numerology.totalValue}</p>
-                  <p><span className="font-medium">Reduced Value:</span> {analysis.numerology.reducedValue}</p>
-                  <p><span className="font-medium">Meaning:</span> {analysis.numerology.meaning}</p>
+                  <p><span className="font-medium">Pythagorean:</span> {analysis.numerology.pythagorean.reducedValue}</p>
+                  <p><span className="font-medium">Chaldean:</span> {analysis.numerology.chaldean.reducedValue}</p>
+                  <p><span className="font-medium">Meaning:</span> {analysis.numerology.pythagorean.meaning}</p>
                 </div>
                 
                 <div className="mt-4">
                   <h5 className="font-medium text-gray-900 mb-2">Characteristics:</h5>
                   <div className="flex flex-wrap gap-2">
-                    {analysis.numerology.characteristics.map((char, index) => (
+                    {analysis.numerology.pythagorean.characteristics.map((char, index) => (
                       <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 text-sm rounded">
                         {char}
                       </span>

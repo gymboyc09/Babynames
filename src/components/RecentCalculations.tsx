@@ -9,12 +9,22 @@ export function RecentCalculations() {
   const { data: session } = useSession();
   const [recentCalculations, setRecentCalculations] = useState<NameAnalysis[]>([]);
 
-  // TODO: Load recent calculations from database
+  // Load recent calculations from database
   React.useEffect(() => {
-    if (session) {
-      // Load recent calculations from database
-      console.log('Loading recent calculations for user:', session.user?.email);
-    }
+    const loadRecentCalculations = async () => {
+      if (session) {
+        try {
+          const response = await fetch('/api/user/data');
+          if (response.ok) {
+            const userData = await response.json();
+            setRecentCalculations(userData.recentCalculations || []);
+          }
+        } catch (error) {
+          console.error('Error loading recent calculations:', error);
+        }
+      }
+    };
+    loadRecentCalculations();
   }, [session]);
 
   const handleAnalyzeName = (name: string) => {
@@ -83,14 +93,17 @@ export function RecentCalculations() {
                     </p>
                     <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <span className="font-medium">Numerology:</span> {calculation.numerology.reducedValue}
+                        <span className="font-medium">Pythagorean:</span> {calculation.numerology.pythagorean.reducedValue}
+                      </div>
+                      <div>
+                        <span className="font-medium">Chaldean:</span> {calculation.numerology.chaldean.reducedValue}
                       </div>
                       <div>
                         <span className="font-medium">Syllables:</span> {calculation.phonology.syllables}
                       </div>
                     </div>
                     <div className="mt-2">
-                      <span className="font-medium">Meaning:</span> {calculation.numerology.meaning}
+                      <span className="font-medium">Meaning:</span> {calculation.numerology.pythagorean.meaning}
                     </div>
                   </div>
                   <div className="flex space-x-2 ml-4">

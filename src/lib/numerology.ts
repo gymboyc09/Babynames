@@ -1,11 +1,27 @@
 export interface NumerologyResult {
   name: string;
-  totalValue: number;
-  reducedValue: number;
-  meaning: string;
-  characteristics: string[];
-  compatibility: string[];
-  warnings: string[];
+  pythagorean: {
+    totalValue: number;
+    reducedValue: number;
+    meaning: string;
+    characteristics: string[];
+    compatibility: string[];
+    warnings: string[];
+  };
+  chaldean: {
+    totalValue: number;
+    reducedValue: number;
+    meaning: string;
+    characteristics: string[];
+    compatibility: string[];
+    warnings: string[];
+  };
+  coreNumbers: {
+    lifePath: number;
+    destiny: number;
+    soul: number;
+    personality: number;
+  };
 }
 
 export interface PhonologyResult {
@@ -21,32 +37,90 @@ export interface PhonologyResult {
 // Numerology calculation functions
 export function calculateNumerology(name: string): NumerologyResult {
   const cleanName = name.toLowerCase().replace(/[^a-z]/g, '');
-  const letterValues: { [key: string]: number } = {
+  
+  // Pythagorean letter values
+  const pythagoreanValues: { [key: string]: number } = {
     'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9,
     'j': 1, 'k': 2, 'l': 3, 'm': 4, 'n': 5, 'o': 6, 'p': 7, 'q': 8, 'r': 9,
     's': 1, 't': 2, 'u': 3, 'v': 4, 'w': 5, 'x': 6, 'y': 7, 'z': 8
   };
 
-  let totalValue = 0;
-  for (const letter of cleanName) {
-    totalValue += letterValues[letter] || 0;
-  }
+  // Chaldean letter values
+  const chaldeanValues: { [key: string]: number } = {
+    'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 8, 'g': 3, 'h': 5, 'i': 1,
+    'j': 1, 'k': 2, 'l': 3, 'm': 4, 'n': 5, 'o': 7, 'p': 8, 'q': 1, 'r': 2,
+    's': 3, 't': 4, 'u': 6, 'v': 6, 'w': 6, 'x': 5, 'y': 1, 'z': 7
+  };
 
-  const reducedValue = reduceToSingleDigit(totalValue);
-  const meaning = getNumerologyMeaning(reducedValue);
-  const characteristics = getCharacteristics(reducedValue);
-  const compatibility = getCompatibility(reducedValue);
-  const warnings = getWarnings(reducedValue);
+  // Calculate Pythagorean values
+  let pythagoreanTotal = 0;
+  for (const letter of cleanName) {
+    pythagoreanTotal += pythagoreanValues[letter] || 0;
+  }
+  const pythagoreanReduced = reduceToSingleDigit(pythagoreanTotal);
+
+  // Calculate Chaldean values
+  let chaldeanTotal = 0;
+  for (const letter of cleanName) {
+    chaldeanTotal += chaldeanValues[letter] || 0;
+  }
+  const chaldeanReduced = reduceToSingleDigit(chaldeanTotal);
+
+  // Calculate core numbers
+  const coreNumbers = calculateCoreNumbers(cleanName);
 
   return {
     name: name,
-    totalValue,
-    reducedValue,
-    meaning,
-    characteristics,
-    compatibility,
-    warnings
+    pythagorean: {
+      totalValue: pythagoreanTotal,
+      reducedValue: pythagoreanReduced,
+      meaning: getNumerologyMeaning(pythagoreanReduced),
+      characteristics: getCharacteristics(pythagoreanReduced),
+      compatibility: getCompatibility(pythagoreanReduced),
+      warnings: getWarnings(pythagoreanReduced)
+    },
+    chaldean: {
+      totalValue: chaldeanTotal,
+      reducedValue: chaldeanReduced,
+      meaning: getNumerologyMeaning(chaldeanReduced),
+      characteristics: getCharacteristics(chaldeanReduced),
+      compatibility: getCompatibility(chaldeanReduced),
+      warnings: getWarnings(chaldeanReduced)
+    },
+    coreNumbers
   };
+}
+
+function calculateCoreNumbers(name: string) {
+  const vowels = 'aeiou';
+  const consonants = 'bcdfghjklmnpqrstvwxyz';
+  
+  let vowelSum = 0;
+  let consonantSum = 0;
+  
+  for (const letter of name) {
+    if (vowels.includes(letter)) {
+      vowelSum += getLetterValue(letter);
+    } else if (consonants.includes(letter)) {
+      consonantSum += getLetterValue(letter);
+    }
+  }
+  
+  return {
+    lifePath: reduceToSingleDigit(vowelSum + consonantSum),
+    destiny: reduceToSingleDigit(vowelSum + consonantSum),
+    soul: reduceToSingleDigit(vowelSum),
+    personality: reduceToSingleDigit(consonantSum)
+  };
+}
+
+function getLetterValue(letter: string): number {
+  const values: { [key: string]: number } = {
+    'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9,
+    'j': 1, 'k': 2, 'l': 3, 'm': 4, 'n': 5, 'o': 6, 'p': 7, 'q': 8, 'r': 9,
+    's': 1, 't': 2, 'u': 3, 'v': 4, 'w': 5, 'x': 6, 'y': 7, 'z': 8
+  };
+  return values[letter] || 0;
 }
 
 function reduceToSingleDigit(num: number): number {
