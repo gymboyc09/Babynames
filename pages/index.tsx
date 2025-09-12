@@ -1,8 +1,19 @@
-import { useSession, signIn, signOut } from "next-auth/react"
-import { useState } from "react"
+import React, { useState } from 'react'
+import { useSession, signIn } from 'next-auth/react'
+import { Header } from '@/components/Header'
+import { Navigation, NavigationTab } from '@/components/Navigation'
+import { MobileNavigation } from '@/components/MobileNavigation'
+import { NumerologyCalculator } from '@/components/NumerologyCalculator'
+import { NameSuggestionEngine } from '@/components/NameSuggestionEngine'
+import { FavoritesList } from '@/components/FavoritesList'
+import { RecentCalculations } from '@/components/RecentCalculations'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Star } from 'lucide-react'
 
 export default function Home() {
   const { data: session, status } = useSession()
+  const [activeTab, setActiveTab] = useState<NavigationTab>('calculator')
   const [loading, setLoading] = useState(false)
 
   if (status === "loading") {
@@ -13,43 +24,94 @@ export default function Home() {
     )
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-2xl font-bold text-center mb-6">
-          Baby Names App
-        </h1>
-        
-        {session ? (
-          <div className="text-center">
-            <p className="text-gray-600 mb-4">
-              Welcome, {session.user?.name}!
-            </p>
-            <p className="text-sm text-gray-500 mb-4">
-              Email: {session.user?.email}
-            </p>
-            <button
-              onClick={() => signOut()}
-              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700"
-            >
-              Sign Out
-            </button>
-          </div>
-        ) : (
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
+          <h1 className="text-2xl font-bold text-center mb-6">
+            Baby Names App
+          </h1>
+          
           <div className="text-center">
             <p className="text-gray-600 mb-4">
               Sign in to access your baby names
             </p>
-            <button
+            <Button
               onClick={() => signIn("google")}
               disabled={loading}
-              className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
+              className="w-full"
             >
               {loading ? "Signing in..." : "Sign in with Google"}
-            </button>
+            </Button>
           </div>
-        )}
+        </div>
       </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header 
+        onNavigateToFavorites={() => setActiveTab('favorites')}
+        onNavigateToHistory={() => setActiveTab('history')}
+      />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 md:pb-8">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+            Find the Perfect
+            <span className="text-blue-600"> Baby Name</span>
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Discover the perfect name for your baby using numerology, phonology, and cultural insights. 
+            Get personalized suggestions with detailed analysis.
+          </p>
+        </div>
+
+        {/* Navigation */}
+        <div className="hidden md:block">
+          <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+        </div>
+
+        {/* Main Content */}
+        {activeTab === 'calculator' && <NumerologyCalculator />}
+        {activeTab === 'suggestions' && <NameSuggestionEngine />}
+        {activeTab === 'favorites' && <FavoritesList />}
+        {activeTab === 'history' && <RecentCalculations />}
+        {activeTab === 'astrology' && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-yellow-600" />
+                Astrology Integration
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Astrology features are coming soon! This will include birth chart analysis, 
+                astrological compatibility with names, and personalized recommendations 
+                based on planetary positions.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+        {activeTab === 'settings' && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">
+                Settings and preferences will be available here soon.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </main>
+      
+      {/* Mobile Navigation */}
+      <MobileNavigation activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   )
 }
