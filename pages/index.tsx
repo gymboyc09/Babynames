@@ -22,6 +22,29 @@ export default function Home() {
     setActiveTab('calculator')
   }
 
+  // Handle tab changes with authentication checks
+  const handleTabChange = (tab: NavigationTab) => {
+    const authRequiredTabs: NavigationTab[] = ['favorites', 'history', 'astrology', 'settings']
+    
+    if (authRequiredTabs.includes(tab) && !session) {
+      // For non-authenticated users, redirect to calculator tab
+      setActiveTab('calculator')
+      return
+    }
+    
+    setActiveTab(tab)
+  }
+
+  // Ensure active tab is always accessible for the current user
+  React.useEffect(() => {
+    const authRequiredTabs: NavigationTab[] = ['favorites', 'history', 'astrology', 'settings']
+    
+    if (authRequiredTabs.includes(activeTab) && !session) {
+      // If current tab requires auth but user is not logged in, switch to calculator
+      setActiveTab('calculator')
+    }
+  }, [session, activeTab])
+
   if (status === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -30,30 +53,8 @@ export default function Home() {
     )
   }
 
-  if (!session) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold text-center mb-6">
-            Baby Names App
-          </h1>
-          
-          <div className="text-center">
-            <p className="text-gray-600 mb-4">
-              Sign in to access your baby names
-            </p>
-            <Button
-              onClick={() => signIn("google")}
-              disabled={loading}
-              className="w-full"
-            >
-              {loading ? "Signing in..." : "Sign in with Google"}
-            </Button>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // Allow anonymous users to access Calculator and Find Names
+  // Only require login for Favorites, History, Astrology, Settings
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -74,7 +75,7 @@ export default function Home() {
 
         {/* Navigation */}
         <div className="hidden md:block mb-8">
-          <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
+          <Navigation activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
 
         {/* Main Content */}
@@ -114,7 +115,7 @@ export default function Home() {
       </main>
       
       {/* Mobile Navigation */}
-      <MobileNavigation activeTab={activeTab} onTabChange={setActiveTab} />
+      <MobileNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   )
 }
