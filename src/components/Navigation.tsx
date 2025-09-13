@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavigationTab } from '@/types';
+import { useSession } from 'next-auth/react';
 
 export type { NavigationTab };
 
@@ -9,14 +10,19 @@ interface NavigationProps {
 }
 
 export function Navigation({ activeTab, onTabChange }: NavigationProps) {
-  const tabs: { id: NavigationTab; label: string }[] = [
+  const { data: session } = useSession();
+  
+  const allTabs: { id: NavigationTab; label: string; requiresAuth?: boolean }[] = [
     { id: 'calculator', label: 'Calculator' },
     { id: 'suggestions', label: 'Find Names' },
-    { id: 'favorites', label: 'Favorites' },
-    { id: 'history', label: 'History' },
-    { id: 'astrology', label: 'Astrology' },
-    { id: 'settings', label: 'Settings' }
+    { id: 'favorites', label: 'Favorites', requiresAuth: true },
+    { id: 'history', label: 'History', requiresAuth: true },
+    { id: 'astrology', label: 'Astrology', requiresAuth: true },
+    { id: 'settings', label: 'Settings', requiresAuth: true }
   ];
+  
+  // Filter tabs based on authentication status
+  const tabs = allTabs.filter(tab => !tab.requiresAuth || session);
 
   return (
     <nav className="border-b border-gray-200">

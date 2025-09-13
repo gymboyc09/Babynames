@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavigationTab } from '@/types';
+import { useSession } from 'next-auth/react';
 
 interface MobileNavigationProps {
   activeTab: NavigationTab;
@@ -7,18 +8,23 @@ interface MobileNavigationProps {
 }
 
 export function MobileNavigation({ activeTab, onTabChange }: MobileNavigationProps) {
-  const tabs: { id: NavigationTab; label: string; icon: string }[] = [
+  const { data: session } = useSession();
+  
+  const allTabs: { id: NavigationTab; label: string; icon: string; requiresAuth?: boolean }[] = [
     { id: 'calculator', label: 'Calculator', icon: '🧮' },
     { id: 'suggestions', label: 'Find', icon: '🔍' },
-    { id: 'favorites', label: 'Favorites', icon: '❤️' },
-    { id: 'history', label: 'History', icon: '📚' },
-    { id: 'astrology', label: 'Astrology', icon: '⭐' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' }
+    { id: 'favorites', label: 'Favorites', icon: '❤️', requiresAuth: true },
+    { id: 'history', label: 'History', icon: '📚', requiresAuth: true },
+    { id: 'astrology', label: 'Astrology', icon: '⭐', requiresAuth: true },
+    { id: 'settings', label: 'Settings', icon: '⚙️', requiresAuth: true }
   ];
+  
+  // Filter tabs based on authentication status
+  const tabs = allTabs.filter(tab => !tab.requiresAuth || session);
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-50">
-      <div className="grid grid-cols-6 gap-1">
+      <div className={`grid gap-1 ${tabs.length === 2 ? 'grid-cols-2' : tabs.length === 3 ? 'grid-cols-3' : tabs.length === 4 ? 'grid-cols-4' : tabs.length === 5 ? 'grid-cols-5' : 'grid-cols-6'}`}>
         {tabs.map((tab) => (
           <button
             key={tab.id}

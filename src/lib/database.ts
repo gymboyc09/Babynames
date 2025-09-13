@@ -126,13 +126,37 @@ export async function removeFavoriteName(userId: string, nameId: string): Promis
 export async function addRecentCalculation(userId: string, nameAnalysis: NameAnalysis): Promise<boolean> {
   try {
     const { db } = await connectToDatabase();
-    await db.collection('userData').updateOne(
-      { id: userId },
-      { 
-        $push: { recentCalculations: { $each: [nameAnalysis], $slice: -50 } },
-        $set: { updatedAt: new Date() }
-      }
-    );
+    
+    // Check if name already exists in recent calculations
+    const existingUser = await db.collection('userData').findOne({
+      id: userId,
+      'recentCalculations.name': nameAnalysis.name
+    });
+    
+    if (existingUser) {
+      // Update timestamp for existing name
+      await db.collection('userData').updateOne(
+        { id: userId, 'recentCalculations.name': nameAnalysis.name },
+        { 
+          $set: { 
+            'recentCalculations.$.timestamp': nameAnalysis.timestamp,
+            'recentCalculations.$.numerology': nameAnalysis.numerology,
+            'recentCalculations.$.phonology': nameAnalysis.phonology,
+            updatedAt: new Date() 
+          }
+        }
+      );
+    } else {
+      // Add new calculation
+      await db.collection('userData').updateOne(
+        { id: userId },
+        { 
+          $push: { recentCalculations: { $each: [nameAnalysis], $slice: -50 } },
+          $set: { updatedAt: new Date() }
+        }
+      );
+    }
+    
     return true;
   } catch (error) {
     console.error('Error adding recent calculation:', error);

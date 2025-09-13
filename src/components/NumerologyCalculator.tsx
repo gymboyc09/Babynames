@@ -6,6 +6,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { NameAnalysis } from '@/types';
 import { useSession } from 'next-auth/react';
+import { LoginModal } from './LoginModal';
 
 interface NumerologyCalculatorProps {
   initialName?: string;
@@ -15,6 +16,7 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
   const [name, setName] = useState(initialName);
   const [result, setResult] = useState<NameAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { data: session } = useSession();
 
   // Update name when initialName prop changes
@@ -79,7 +81,13 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
   };
 
   const handleToggleFavorite = async () => {
-    if (!result || !session) return;
+    if (!result) return;
+    
+    // Check if user is logged in
+    if (!session) {
+      setShowLoginModal(true);
+      return;
+    }
     
     try {
       if (result.isFavorite) {
@@ -154,15 +162,13 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Analysis for "{result.name}"</CardTitle>
-                {session && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleToggleFavorite}
-                  >
-                    {result.isFavorite ? '❤️ Remove from Favorites' : '🤍 Add to Favorites'}
-                  </Button>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleToggleFavorite}
+                >
+                  {result.isFavorite ? '❤️ Remove from Favorites' : '🤍 Add to Favorites'}
+                </Button>
               </div>
             </CardHeader>
             <CardContent>
@@ -372,6 +378,12 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
           </Card>
         </div>
       )}
+      
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        message="Please sign in to save your favorites and view your history"
+      />
     </div>
   );
 }
