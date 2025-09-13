@@ -3,6 +3,7 @@ import { useSession, signOut, signIn } from 'next-auth/react';
 import { Button } from './ui/button';
 import { NavigationTab } from '@/types';
 import { AnimatedHeadline } from './AnimatedHeadline';
+import Image from 'next/image';
 
 interface HeaderProps {
   activeTab: NavigationTab;
@@ -30,9 +31,13 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
         {/* Top row with logo, animated headline, and user info */}
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <h1 className="text-xl font-bold text-gray-900">
-              Baby Names
-            </h1>
+            <Image
+              src="/logo.png"
+              alt="Baby Names"
+              width={120}
+              height={40}
+              className="h-8 w-auto"
+            />
           </div>
           
           {/* Animated headline in center */}

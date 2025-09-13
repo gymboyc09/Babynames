@@ -1,8 +1,9 @@
 import React from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession, signOut, signIn } from 'next-auth/react';
 import { NavigationTab } from '@/types';
 import { Button } from './ui/button';
 import { X, Menu } from 'lucide-react';
+import Image from 'next/image';
 
 interface MobileSidebarProps {
   activeTab: NavigationTab;
@@ -56,7 +57,13 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <h2 className="text-lg font-semibold text-gray-900">Baby Names</h2>
+            <Image
+              src="/logo.png"
+              alt="Baby Names"
+              width={100}
+              height={32}
+              className="h-6 w-auto"
+            />
             <button
               onClick={onToggle}
               className="p-1 rounded-md hover:bg-gray-100"
@@ -66,7 +73,7 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
           </div>
 
           {/* User info section */}
-          {session && (
+          {session ? (
             <div className="p-4 border-b border-gray-200 bg-gray-50">
               <div className="flex items-center space-x-3">
                 <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
@@ -91,6 +98,22 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
               >
                 Sign Out
               </Button>
+            </div>
+          ) : (
+            <div className="p-4 border-b border-gray-200 bg-gray-50">
+              <div className="text-center">
+                <p className="text-sm text-gray-600 mb-3">
+                  Sign in to save your favorites
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => signIn("google")}
+                  className="w-full"
+                >
+                  Sign In with Google
+                </Button>
+              </div>
             </div>
           )}
 

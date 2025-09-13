@@ -125,9 +125,6 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
         <CardContent>
           <div className="space-y-4">
             <div>
-              <label htmlFor="name-input" className="block text-sm font-medium text-gray-700 mb-2">
-                Enter a name to analyze
-              </label>
               <Input
                 id="name-input"
                 value={name}
