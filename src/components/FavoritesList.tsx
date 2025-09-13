@@ -4,7 +4,11 @@ import { Button } from './ui/button';
 import { NameAnalysis } from '@/types';
 import { useSession } from 'next-auth/react';
 
-export function FavoritesList() {
+interface FavoritesListProps {
+  onNavigateToCalculator?: (name: string) => void;
+}
+
+export function FavoritesList({ onNavigateToCalculator }: FavoritesListProps) {
   const { data: session } = useSession();
   const [favorites, setFavorites] = useState<NameAnalysis[]>([]);
 
@@ -45,8 +49,12 @@ export function FavoritesList() {
   };
 
   const handleAnalyzeName = (name: string) => {
-    // TODO: Navigate to analysis or show analysis
-    console.log('Analyzing name:', name);
+    // Find the favorite for this name
+    const favorite = favorites.find(fav => fav.name === name);
+    if (favorite) {
+      // Navigate to calculator tab and set the name
+      onNavigateToCalculator?.(favorite.name);
+    }
   };
 
   if (!session) {

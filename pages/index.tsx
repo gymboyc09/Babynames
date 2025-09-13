@@ -15,6 +15,12 @@ export default function Home() {
   const { data: session, status } = useSession()
   const [activeTab, setActiveTab] = useState<NavigationTab>('calculator')
   const [loading, setLoading] = useState(false)
+  const [calculatorName, setCalculatorName] = useState('')
+
+  const handleNavigateToCalculator = (name: string) => {
+    setCalculatorName(name)
+    setActiveTab('calculator')
+  }
 
   if (status === "loading") {
     return (
@@ -72,10 +78,10 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        {activeTab === 'calculator' && <NumerologyCalculator />}
+        {activeTab === 'calculator' && <NumerologyCalculator initialName={calculatorName} />}
         {activeTab === 'suggestions' && <NameSuggestionEngine />}
-        {activeTab === 'favorites' && <FavoritesList />}
-        {activeTab === 'history' && <RecentCalculations />}
+        {activeTab === 'favorites' && <FavoritesList onNavigateToCalculator={handleNavigateToCalculator} />}
+        {activeTab === 'history' && <RecentCalculations onNavigateToCalculator={handleNavigateToCalculator} />}
         {activeTab === 'astrology' && (
           <Card>
             <CardHeader>

@@ -7,11 +7,29 @@ import { Button } from './ui/button';
 import { NameAnalysis } from '@/types';
 import { useSession } from 'next-auth/react';
 
-export function NumerologyCalculator() {
-  const [name, setName] = useState('');
+interface NumerologyCalculatorProps {
+  initialName?: string;
+}
+
+export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorProps) {
+  const [name, setName] = useState(initialName);
   const [result, setResult] = useState<NameAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { data: session } = useSession();
+
+  // Update name when initialName prop changes
+  React.useEffect(() => {
+    if (initialName) {
+      setName(initialName);
+    }
+  }, [initialName]);
+
+  // Clear result when name changes manually
+  React.useEffect(() => {
+    if (name !== initialName) {
+      setResult(null);
+    }
+  }, [name, initialName]);
 
   const handleAnalyze = async () => {
     if (!name.trim()) return;

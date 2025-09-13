@@ -5,7 +5,11 @@ import { NameAnalysis } from '@/types';
 import { useSession } from 'next-auth/react';
 import { formatDate } from '@/lib/utils';
 
-export function RecentCalculations() {
+interface RecentCalculationsProps {
+  onNavigateToCalculator?: (name: string) => void;
+}
+
+export function RecentCalculations({ onNavigateToCalculator }: RecentCalculationsProps) {
   const { data: session } = useSession();
   const [recentCalculations, setRecentCalculations] = useState<NameAnalysis[]>([]);
 
@@ -28,8 +32,12 @@ export function RecentCalculations() {
   }, [session]);
 
   const handleAnalyzeName = (name: string) => {
-    // TODO: Navigate to analysis or show analysis
-    console.log('Analyzing name:', name);
+    // Find the calculation for this name
+    const calculation = recentCalculations.find(calc => calc.name === name);
+    if (calculation) {
+      // Navigate to calculator tab and set the name
+      onNavigateToCalculator?.(calculation.name);
+    }
   };
 
   const handleToggleFavorite = async (id: string) => {
@@ -77,11 +85,21 @@ export function RecentCalculations() {
     }
   };
 
-  const handleRemoveCalculation = (id: string) => {
-    setRecentCalculations(prev => prev.filter(calc => calc.id !== id));
-    // TODO: Remove from database
-    if (session) {
-      console.log('Removing calculation:', id);
+  const handleRemoveCalculation = async (id: string) => {
+    if (!session) return;
+    
+    try {
+      const response = await fetch('/api/user/recent', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nameId: id })
+      });
+      
+      if (response.ok) {
+        setRecentCalculations(prev => prev.filter(calc => calc.id !== id));
+      }
+    } catch (error) {
+      console.error('Error removing calculation:', error);
     }
   };
 
