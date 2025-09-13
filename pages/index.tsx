@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import { Header } from '@/components/Header'
 import { MobileSidebar } from '@/components/MobileSidebar'
+import { Footer } from '@/components/Footer'
 import { NumerologyCalculator } from '@/components/NumerologyCalculator'
 import { NameSuggestionEngine } from '@/components/NameSuggestionEngine'
 import { FavoritesList } from '@/components/FavoritesList'
@@ -13,7 +14,7 @@ import { NavigationTab } from '@/types'
 
 export default function Home() {
   const { data: session, status } = useSession()
-  const [activeTab, setActiveTab] = useState<NavigationTab>('calculator')
+  const [activeTab, setActiveTab] = useState<NavigationTab>('suggestions')
   const [loading, setLoading] = useState(false)
   const [calculatorName, setCalculatorName] = useState('')
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
@@ -28,8 +29,8 @@ export default function Home() {
     const authRequiredTabs: NavigationTab[] = ['favorites', 'history', 'astrology', 'settings']
     
     if (authRequiredTabs.includes(tab) && !session) {
-      // For non-authenticated users, redirect to calculator tab
-      setActiveTab('calculator')
+      // For non-authenticated users, redirect to suggestions tab
+      setActiveTab('suggestions')
       return
     }
     
@@ -41,8 +42,8 @@ export default function Home() {
     const authRequiredTabs: NavigationTab[] = ['favorites', 'history', 'astrology', 'settings']
     
     if (authRequiredTabs.includes(activeTab) && !session) {
-      // If current tab requires auth but user is not logged in, switch to calculator
-      setActiveTab('calculator')
+      // If current tab requires auth but user is not logged in, switch to suggestions
+      setActiveTab('suggestions')
     }
   }, [session, activeTab])
 
@@ -111,6 +112,8 @@ export default function Home() {
           </Card>
         )}
       </main>
+      
+      <Footer />
     </div>
   )
 }

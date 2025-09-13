@@ -14,8 +14,8 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   const { data: session } = useSession();
 
   const allTabs: { id: NavigationTab; label: string; requiresAuth?: boolean }[] = [
-    { id: 'calculator', label: 'Calculator' },
     { id: 'suggestions', label: 'Find Names' },
+    { id: 'calculator', label: 'Calculator' },
     { id: 'favorites', label: 'Favorites', requiresAuth: true },
     { id: 'history', label: 'History', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', requiresAuth: true },

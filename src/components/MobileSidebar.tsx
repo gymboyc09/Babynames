@@ -16,8 +16,8 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
   const { data: session } = useSession();
   
   const allTabs: { id: NavigationTab; label: string; icon: string; requiresAuth?: boolean }[] = [
-    { id: 'calculator', label: 'Calculator', icon: '🧮' },
     { id: 'suggestions', label: 'Find Names', icon: '🔍' },
+    { id: 'calculator', label: 'Calculator', icon: '🧮' },
     { id: 'favorites', label: 'Favorites', icon: '❤️', requiresAuth: true },
     { id: 'history', label: 'History', icon: '📚', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', icon: '⭐', requiresAuth: true },

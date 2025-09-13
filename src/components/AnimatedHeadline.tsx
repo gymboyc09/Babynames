@@ -7,7 +7,7 @@ export function AnimatedHeadline() {
   const [showCursor, setShowCursor] = useState(true);
 
   const words = ['Astrology', 'Numerology', 'Phonology'];
-  const baseText = 'Find the Perfect Baby Name by using ';
+  const baseText = 'Find the Perfect Baby Name with ';
   const typingSpeed = 100;
   const deletingSpeed = 50;
   const pauseTime = 2000;

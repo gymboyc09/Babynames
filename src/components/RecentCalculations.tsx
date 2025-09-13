@@ -21,7 +21,10 @@ export function RecentCalculations({ onNavigateToCalculator }: RecentCalculation
           const response = await fetch('/api/user/data');
           if (response.ok) {
             const userData = await response.json();
-            setRecentCalculations(userData.recentCalculations || []);
+            const sortedCalculations = (userData.recentCalculations || []).sort((a: any, b: any) => 
+              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+            setRecentCalculations(sortedCalculations);
           }
         } catch (error) {
           console.error('Error loading recent calculations:', error);

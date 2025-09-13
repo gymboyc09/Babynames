@@ -20,7 +20,10 @@ export function FavoritesList({ onNavigateToCalculator }: FavoritesListProps) {
           const response = await fetch('/api/user/data');
           if (response.ok) {
             const userData = await response.json();
-            setFavorites(userData.favoriteNames || []);
+            const sortedFavorites = (userData.favoriteNames || []).sort((a: any, b: any) => 
+              new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+            );
+            setFavorites(sortedFavorites);
           }
         } catch (error) {
           console.error('Error loading favorites:', error);
