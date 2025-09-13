@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import { Header } from '@/components/Header'
 import { MobileSidebar } from '@/components/MobileSidebar'
-import { AnimatedHeadline } from '@/components/AnimatedHeadline'
 import { NumerologyCalculator } from '@/components/NumerologyCalculator'
 import { NameSuggestionEngine } from '@/components/NameSuggestionEngine'
 import { FavoritesList } from '@/components/FavoritesList'
@@ -69,8 +68,6 @@ export default function Home() {
       />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Animated Hero Section - Show for all users */}
-        <AnimatedHeadline />
 
         {/* Main Content */}
         {activeTab === 'calculator' && <NumerologyCalculator initialName={calculatorName} />}

@@ -51,8 +51,8 @@ export function AnimatedHeadline() {
   }, []);
 
   return (
-    <div className="text-center mb-12">
-      <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+    <div className="text-center">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
         {baseText}
         <span className="text-blue-600 inline-block min-h-[1.2em]">
           {currentText}
@@ -63,7 +63,7 @@ export function AnimatedHeadline() {
           />
         </span>
       </h1>
-      <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+      <p className="text-sm md:text-base text-gray-600 max-w-2xl mx-auto">
         Discover the perfect name for your baby using advanced analysis techniques. 
         Get personalized suggestions with detailed insights and cultural meanings.
       </p>

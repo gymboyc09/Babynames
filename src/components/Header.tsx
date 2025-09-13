@@ -1,7 +1,8 @@
 import React from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession, signOut, signIn } from 'next-auth/react';
 import { Button } from './ui/button';
 import { NavigationTab } from '@/types';
+import { AnimatedHeadline } from './AnimatedHeadline';
 
 interface HeaderProps {
   activeTab: NavigationTab;
@@ -49,11 +50,25 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 </Button>
               </div>
             ) : (
-              <div className="text-sm text-gray-500">
-                Sign in to save your favorites
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-gray-500">
+                  Sign in to save your favorites
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => signIn("google")}
+                >
+                  Sign In
+                </Button>
               </div>
             )}
           </div>
+        </div>
+        
+        {/* Animated headline */}
+        <div className="py-6 border-t border-gray-200">
+          <AnimatedHeadline />
         </div>
         
         {/* Navigation tabs for desktop */}
