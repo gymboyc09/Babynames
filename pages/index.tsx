@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import { Header } from '@/components/Header'
-import { Navigation, NavigationTab } from '@/components/Navigation'
-import { MobileNavigation } from '@/components/MobileNavigation'
+import { MobileSidebar } from '@/components/MobileSidebar'
 import { NumerologyCalculator } from '@/components/NumerologyCalculator'
 import { NameSuggestionEngine } from '@/components/NameSuggestionEngine'
 import { FavoritesList } from '@/components/FavoritesList'
@@ -10,12 +9,14 @@ import { RecentCalculations } from '@/components/RecentCalculations'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Star } from 'lucide-react'
+import { NavigationTab } from '@/types'
 
 export default function Home() {
   const { data: session, status } = useSession()
   const [activeTab, setActiveTab] = useState<NavigationTab>('calculator')
   const [loading, setLoading] = useState(false)
   const [calculatorName, setCalculatorName] = useState('')
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   const handleNavigateToCalculator = (name: string) => {
     setCalculatorName(name)
@@ -58,25 +59,28 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-             <Header />
+      <Header activeTab={activeTab} onTabChange={handleTabChange} />
+      <MobileSidebar 
+        activeTab={activeTab} 
+        onTabChange={handleTabChange}
+        isOpen={mobileSidebarOpen}
+        onToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+      />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-20 md:pb-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
-            Find the Perfect
-            <span className="text-blue-600"> Baby Name</span>
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover the perfect name for your baby using numerology, phonology, and cultural insights. 
-            Get personalized suggestions with detailed analysis.
-          </p>
-        </div>
-
-        {/* Navigation */}
-        <div className="hidden md:block mb-8">
-          <Navigation activeTab={activeTab} onTabChange={handleTabChange} />
-        </div>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Hero Section - Only show for anonymous users */}
+        {!session && (
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+              Find the Perfect
+              <span className="text-blue-600"> Baby Name</span>
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Discover the perfect name for your baby using numerology, phonology, and cultural insights. 
+              Get personalized suggestions with detailed analysis.
+            </p>
+          </div>
+        )}
 
         {/* Main Content */}
         {activeTab === 'calculator' && <NumerologyCalculator initialName={calculatorName} />}
@@ -113,9 +117,6 @@ export default function Home() {
           </Card>
         )}
       </main>
-      
-      {/* Mobile Navigation */}
-      <MobileNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   )
 }
