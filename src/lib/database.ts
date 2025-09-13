@@ -65,25 +65,70 @@ export async function addFavoriteName(userId: string, nameAnalysis: NameAnalysis
   try {
     const { db } = await connectToDatabase();
     
-    // Add to favorites
-    await db.collection('userData').updateOne(
-      { id: userId },
-      { 
-        $push: { favoriteNames: nameAnalysis },
-        $set: { updatedAt: new Date() }
-      }
-    );
+    // Normalize the name for case-insensitive comparison
+    const normalizedName = nameAnalysis.name.toLowerCase().trim();
     
-    // Mark as favorite in recent calculations
-    await db.collection('userData').updateOne(
-      { id: userId, 'recentCalculations.id': nameAnalysis.id },
-      { 
-        $set: { 
-          'recentCalculations.$.isFavorite': true,
-          updatedAt: new Date() 
-        }
+    // First, get the user's current data
+    const userData = await db.collection('userData').findOne({ id: userId });
+    
+    if (userData && userData.favoriteNames) {
+      // Check if favorite already exists (case-insensitive)
+      const existingFavoriteIndex = userData.favoriteNames.findIndex(
+        (fav: any) => fav.name.toLowerCase().trim() === normalizedName
+      );
+      
+      if (existingFavoriteIndex === -1) {
+        // Add new favorite
+        const newFavorites = [...userData.favoriteNames, nameAnalysis];
+        
+        await db.collection('userData').updateOne(
+          { id: userId },
+          { 
+            $set: { 
+              favoriteNames: newFavorites,
+              updatedAt: new Date() 
+            }
+          }
+        );
       }
-    );
+    } else {
+      // User doesn't exist or has no favorites, create new
+      await db.collection('userData').updateOne(
+        { id: userId },
+        { 
+          $set: { 
+            favoriteNames: [nameAnalysis],
+            updatedAt: new Date() 
+          }
+        },
+        { upsert: true }
+      );
+    }
+    
+    // Mark as favorite in recent calculations (case-insensitive)
+    if (userData && userData.recentCalculations) {
+      const recentIndex = userData.recentCalculations.findIndex(
+        (calc: any) => calc.name.toLowerCase().trim() === normalizedName
+      );
+      
+      if (recentIndex !== -1) {
+        const updatedCalculations = [...userData.recentCalculations];
+        updatedCalculations[recentIndex] = {
+          ...updatedCalculations[recentIndex],
+          isFavorite: true
+        };
+        
+        await db.collection('userData').updateOne(
+          { id: userId },
+          { 
+            $set: { 
+              recentCalculations: updatedCalculations,
+              updatedAt: new Date() 
+            }
+          }
+        );
+      }
+    }
     
     return true;
   } catch (error) {
@@ -96,25 +141,55 @@ export async function removeFavoriteName(userId: string, nameId: string): Promis
   try {
     const { db } = await connectToDatabase();
     
-    // Remove from favorites
-    await db.collection('userData').updateOne(
-      { id: userId },
-      { 
-        $pull: { favoriteNames: { id: nameId } },
-        $set: { updatedAt: new Date() }
-      }
-    );
+    // First, get the user's current data to find the name
+    const userData = await db.collection('userData').findOne({ id: userId });
     
-    // Mark as not favorite in recent calculations
-    await db.collection('userData').updateOne(
-      { id: userId, 'recentCalculations.id': nameId },
-      { 
-        $set: { 
-          'recentCalculations.$.isFavorite': false,
-          updatedAt: new Date() 
+    if (userData && userData.favoriteNames) {
+      // Find the favorite to get the name for case-insensitive matching
+      const favoriteToRemove = userData.favoriteNames.find((fav: any) => fav.id === nameId);
+      
+      if (favoriteToRemove) {
+        const normalizedName = favoriteToRemove.name.toLowerCase().trim();
+        
+        // Remove from favorites
+        const updatedFavorites = userData.favoriteNames.filter((fav: any) => fav.id !== nameId);
+        
+        await db.collection('userData').updateOne(
+          { id: userId },
+          { 
+            $set: { 
+              favoriteNames: updatedFavorites,
+              updatedAt: new Date() 
+            }
+          }
+        );
+        
+        // Mark as not favorite in recent calculations (case-insensitive)
+        if (userData.recentCalculations) {
+          const recentIndex = userData.recentCalculations.findIndex(
+            (calc: any) => calc.name.toLowerCase().trim() === normalizedName
+          );
+          
+          if (recentIndex !== -1) {
+            const updatedCalculations = [...userData.recentCalculations];
+            updatedCalculations[recentIndex] = {
+              ...updatedCalculations[recentIndex],
+              isFavorite: false
+            };
+            
+            await db.collection('userData').updateOne(
+              { id: userId },
+              { 
+                $set: { 
+                  recentCalculations: updatedCalculations,
+                  updatedAt: new Date() 
+                }
+              }
+            );
+          }
         }
       }
-    );
+    }
     
     return true;
   } catch (error) {
@@ -127,33 +202,64 @@ export async function addRecentCalculation(userId: string, nameAnalysis: NameAna
   try {
     const { db } = await connectToDatabase();
     
-    // Check if name already exists in recent calculations
-    const existingUser = await db.collection('userData').findOne({
-      id: userId,
-      'recentCalculations.name': nameAnalysis.name
-    });
+    // Normalize the name for case-insensitive comparison
+    const normalizedName = nameAnalysis.name.toLowerCase().trim();
     
-    if (existingUser) {
-      // Update timestamp for existing name
-      await db.collection('userData').updateOne(
-        { id: userId, 'recentCalculations.name': nameAnalysis.name },
-        { 
-          $set: { 
-            'recentCalculations.$.timestamp': nameAnalysis.timestamp,
-            'recentCalculations.$.numerology': nameAnalysis.numerology,
-            'recentCalculations.$.phonology': nameAnalysis.phonology,
-            updatedAt: new Date() 
-          }
-        }
+    // First, get the user's current data
+    const userData = await db.collection('userData').findOne({ id: userId });
+    
+    if (userData && userData.recentCalculations) {
+      // Check if a calculation with the same normalized name exists
+      const existingIndex = userData.recentCalculations.findIndex(
+        (calc: any) => calc.name.toLowerCase().trim() === normalizedName
       );
+      
+      if (existingIndex !== -1) {
+        // Update existing calculation
+        const updatedCalculations = [...userData.recentCalculations];
+        updatedCalculations[existingIndex] = {
+          ...updatedCalculations[existingIndex],
+          timestamp: nameAnalysis.timestamp,
+          numerology: nameAnalysis.numerology,
+          phonology: nameAnalysis.phonology
+        };
+        
+        await db.collection('userData').updateOne(
+          { id: userId },
+          { 
+            $set: { 
+              recentCalculations: updatedCalculations,
+              updatedAt: new Date() 
+            }
+          }
+        );
+      } else {
+        // Add new calculation
+        const newCalculations = [...userData.recentCalculations, nameAnalysis];
+        // Keep only the last 50 calculations
+        const limitedCalculations = newCalculations.slice(-50);
+        
+        await db.collection('userData').updateOne(
+          { id: userId },
+          { 
+            $set: { 
+              recentCalculations: limitedCalculations,
+              updatedAt: new Date() 
+            }
+          }
+        );
+      }
     } else {
-      // Add new calculation
+      // User doesn't exist or has no calculations, create new
       await db.collection('userData').updateOne(
         { id: userId },
         { 
-          $push: { recentCalculations: { $each: [nameAnalysis], $slice: -50 } },
-          $set: { updatedAt: new Date() }
-        }
+          $set: { 
+            recentCalculations: [nameAnalysis],
+            updatedAt: new Date() 
+          }
+        },
+        { upsert: true }
       );
     }
     
