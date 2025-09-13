@@ -27,12 +27,17 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top row with logo and user info */}
+        {/* Top row with logo, animated headline, and user info */}
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <h1 className="text-xl font-bold text-gray-900">
               Baby Names
             </h1>
+          </div>
+          
+          {/* Animated headline in center */}
+          <div className="hidden lg:flex items-center flex-1 justify-center px-4">
+            <AnimatedHeadline />
           </div>
           
           <div className="hidden md:flex items-center space-x-4">
@@ -64,11 +69,6 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </div>
             )}
           </div>
-        </div>
-        
-        {/* Animated headline */}
-        <div className="py-6 border-t border-gray-200">
-          <AnimatedHeadline />
         </div>
         
         {/* Navigation tabs for desktop */}
