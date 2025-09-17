@@ -251,7 +251,30 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Core Numbers (Chaldean System)</h4>
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="font-semibold text-gray-900">Core Numbers (Chaldean System)</h4>
+                      <div className="flex items-center space-x-2">
+                        <div className="text-sm text-gray-600">Overall Strength:</div>
+                        <div className="px-3 py-1 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full">
+                          <span className="text-lg font-bold text-blue-700">
+                            {(() => {
+                              const coreNumbers = [
+                                result.numerology.coreNumbers.lifePath,
+                                result.numerology.coreNumbers.destiny,
+                                result.numerology.coreNumbers.soul,
+                                result.numerology.coreNumbers.personality,
+                                result.numerology.coreNumbers.radical
+                              ].filter(num => num > 0); // Only include non-zero values
+                              
+                              if (coreNumbers.length === 0) return '0%';
+                              
+                              const averageStrength = coreNumbers.reduce((sum, num) => sum + (num / 9) * 100, 0) / coreNumbers.length;
+                              return Math.round(averageStrength) + '%';
+                            })()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                     <div className="grid grid-cols-2 gap-4">
                       {result.numerology.coreNumbers.lifePath > 0 && (
                         <div className="p-3 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg">
