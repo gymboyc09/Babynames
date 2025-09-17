@@ -2,7 +2,7 @@ import React from 'react';
 import { useSession, signOut, signIn } from 'next-auth/react';
 import { NavigationTab } from '@/types';
 import { Button } from './ui/button';
-import { X, Menu } from 'lucide-react';
+import { X, Menu, Home } from 'lucide-react';
 import Image from 'next/image';
 
 interface MobileSidebarProps {
@@ -32,6 +32,11 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
     onToggle(); // Close sidebar after selection
   };
 
+  const handleHomeClick = () => {
+    onTabChange('suggestions');
+    onToggle(); // Close sidebar after selection
+  };
+
   return (
     <>
       {/* Mobile menu button */}
@@ -57,13 +62,22 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <Image
-              src="/logo.png"
-              alt="Baby Names"
-              width={100}
-              height={32}
-              className="h-6 w-auto"
-            />
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={handleHomeClick}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                title="Go to Homepage"
+              >
+                <Home className="h-5 w-5 text-gray-600 hover:text-blue-600" />
+              </button>
+              <Image
+                src="/logo.png"
+                alt="Baby Names"
+                width={100}
+                height={32}
+                className="h-6 w-auto"
+              />
+            </div>
             <button
               onClick={onToggle}
               className="p-1 rounded-md hover:bg-gray-100"

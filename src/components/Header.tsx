@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { NavigationTab } from '@/types';
 import { AnimatedHeadline } from './AnimatedHeadline';
 import Image from 'next/image';
+import { Home } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: NavigationTab;
@@ -25,12 +26,24 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   // Filter tabs based on authentication status
   const tabs = allTabs.filter(tab => !tab.requiresAuth || session);
 
+  const handleHomeClick = () => {
+    // Navigate to homepage by changing to the default tab (suggestions)
+    onTabChange('suggestions');
+  };
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top row with logo, animated headline, and user info */}
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={handleHomeClick}
+              className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+              title="Go to Homepage"
+            >
+              <Home className="h-5 w-5 text-gray-600 hover:text-blue-600" />
+            </button>
             <Image
               src="/logo.png"
               alt="Baby Names"
