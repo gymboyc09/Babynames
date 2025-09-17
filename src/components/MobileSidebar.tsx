@@ -62,22 +62,13 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={handleHomeClick}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-                title="Go to Homepage"
-              >
-                <Home className="h-5 w-5 text-gray-600 hover:text-blue-600" />
-              </button>
-              <Image
-                src="/logo.png"
-                alt="Baby Names"
-                width={100}
-                height={32}
-                className="h-6 w-auto"
-              />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Baby Names"
+              width={100}
+              height={32}
+              className="h-6 w-auto"
+            />
             <button
               onClick={onToggle}
               className="p-1 rounded-md hover:bg-gray-100"
@@ -134,6 +125,16 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
           {/* Navigation */}
           <nav className="flex-1 p-4">
             <div className="space-y-2">
+              {/* Home button */}
+              <button
+                onClick={handleHomeClick}
+                className="w-full flex items-center space-x-3 px-3 py-3 rounded-lg text-left transition-colors text-gray-700 hover:bg-gray-100"
+              >
+                <Home className="h-5 w-5 text-gray-600" />
+                <span className="font-medium">Home</span>
+              </button>
+              
+              {/* Navigation tabs */}
               {tabs.map((tab) => (
                 <button
                   key={tab.id}

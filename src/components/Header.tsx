@@ -36,14 +36,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Top row with logo, animated headline, and user info */}
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-3">
-            <button
-              onClick={handleHomeClick}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-              title="Go to Homepage"
-            >
-              <Home className="h-5 w-5 text-gray-600 hover:text-blue-600" />
-            </button>
+          <div className="flex items-center">
             <Image
               src="/logo.png"
               alt="Baby Names"
@@ -91,7 +84,17 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
         
         {/* Navigation tabs for desktop */}
         <div className="hidden md:block border-t border-gray-200">
-          <nav className="flex space-x-6 overflow-x-auto">
+          <nav className="flex items-center space-x-6 overflow-x-auto">
+            {/* Home icon */}
+            <button
+              onClick={handleHomeClick}
+              className="py-4 px-2 border-b-2 border-transparent hover:border-gray-300 transition-colors duration-200"
+              title="Go to Homepage"
+            >
+              <Home className="h-5 w-5 text-gray-500 hover:text-blue-600" />
+            </button>
+            
+            {/* Navigation tabs */}
             {tabs.map((tab) => (
               <button
                 key={tab.id}
