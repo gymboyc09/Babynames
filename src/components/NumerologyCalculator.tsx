@@ -240,20 +240,20 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                     <h4 className="font-semibold text-gray-900 mb-3">Core Numbers</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">{result.numerology.coreNumbers.lifePath}</div>
-                        <div className="text-sm text-gray-600">Life Path</div>
-                      </div>
-                      <div className="p-3 bg-gray-50 rounded-lg">
                         <div className="text-2xl font-bold text-green-600">{result.numerology.coreNumbers.destiny}</div>
-                        <div className="text-sm text-gray-600">Destiny</div>
+                        <div className="text-sm text-gray-600">Destiny Number</div>
                       </div>
                       <div className="p-3 bg-gray-50 rounded-lg">
                         <div className="text-2xl font-bold text-purple-600">{result.numerology.coreNumbers.soul}</div>
-                        <div className="text-sm text-gray-600">Soul</div>
+                        <div className="text-sm text-gray-600">Heart Desire Number</div>
                       </div>
                       <div className="p-3 bg-gray-50 rounded-lg">
                         <div className="text-2xl font-bold text-orange-600">{result.numerology.coreNumbers.personality}</div>
-                        <div className="text-sm text-gray-600">Personality</div>
+                        <div className="text-sm text-gray-600">Personality Number</div>
+                      </div>
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <div className="text-2xl font-bold text-blue-600">{result.numerology.coreNumbers.radical}</div>
+                        <div className="text-sm text-gray-600">Radical Number</div>
                       </div>
                     </div>
                   </div>

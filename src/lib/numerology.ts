@@ -19,10 +19,10 @@ export interface NumerologyResult {
     letterBreakdown: { letter: string; value: number }[];
   };
   coreNumbers: {
-    lifePath: number;
-    destiny: number;
-    soul: number;
-    personality: number;
+    destiny: number;           // Sum of all letters (full name)
+    soul: number;             // Sum of vowels only (Heart Desire)
+    personality: number;      // Sum of consonants only
+    radical: number;          // Sum of first name only
   };
 }
 
@@ -105,22 +105,35 @@ function calculateCoreNumbers(name: string) {
   const vowels = 'aeiou';
   const consonants = 'bcdfghjklmnpqrstvwxyz';
   
+  // Split name into parts (first name, middle name, last name)
+  const nameParts = name.toLowerCase().split(/\s+/).filter(part => part.length > 0);
+  const firstName = nameParts[0] || '';
+  const fullName = nameParts.join('');
+  
   let vowelSum = 0;
   let consonantSum = 0;
+  let firstNameSum = 0;
   
-  for (const letter of name) {
+  // Calculate for full name
+  for (const letter of fullName) {
+    const value = getLetterValue(letter);
     if (vowels.includes(letter)) {
-      vowelSum += getLetterValue(letter);
+      vowelSum += value;
     } else if (consonants.includes(letter)) {
-      consonantSum += getLetterValue(letter);
+      consonantSum += value;
     }
   }
   
+  // Calculate for first name only
+  for (const letter of firstName) {
+    firstNameSum += getLetterValue(letter);
+  }
+  
   return {
-    lifePath: reduceToSingleDigit(vowelSum + consonantSum),
-    destiny: reduceToSingleDigit(vowelSum + consonantSum),
-    soul: reduceToSingleDigit(vowelSum),
-    personality: reduceToSingleDigit(consonantSum)
+    destiny: reduceToSingleDigit(vowelSum + consonantSum),    // All letters (full name)
+    soul: reduceToSingleDigit(vowelSum),                      // Vowels only (Heart Desire)
+    personality: reduceToSingleDigit(consonantSum),           // Consonants only
+    radical: reduceToSingleDigit(firstNameSum)                // First name only
   };
 }
 
