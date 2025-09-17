@@ -14,6 +14,7 @@ interface NumerologyCalculatorProps {
 
 export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorProps) {
   const [name, setName] = useState(initialName);
+  const [dateOfBirth, setDateOfBirth] = useState('');
   const [result, setResult] = useState<NameAnalysis | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -39,7 +40,7 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
     setIsAnalyzing(true);
     
     try {
-      const numerology = calculateNumerology(name);
+      const numerology = calculateNumerology(name, dateOfBirth || undefined);
       const phonology = analyzePhonology(name);
       
       const analysis: NameAnalysis = {
@@ -77,6 +78,7 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
 
   const handleClear = () => {
     setName('');
+    setDateOfBirth('');
     setResult(null);
   };
 
@@ -132,6 +134,18 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                 placeholder="Type a name to analyze..."
                 className="text-lg"
               />
+            </div>
+            <div>
+              <Input
+                id="dob-input"
+                value={dateOfBirth}
+                onChange={setDateOfBirth}
+                placeholder="Date of Birth (DD/MM/YYYY) - Optional"
+                className="text-lg"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Enter birth date for more accurate Life Path Number calculation
+              </p>
             </div>
             <div className="flex space-x-2">
               <Button
@@ -239,21 +253,77 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                   <div>
                     <h4 className="font-semibold text-gray-900 mb-3">Core Numbers</h4>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-2xl font-bold text-green-600">{result.numerology.coreNumbers.destiny}</div>
-                        <div className="text-sm text-gray-600">Destiny Number</div>
+                      {result.numerology.coreNumbers.lifePath > 0 && (
+                        <div className="p-3 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <div className="text-2xl font-bold text-indigo-600">{result.numerology.coreNumbers.lifePath}</div>
+                              <div className="text-sm text-gray-600">Life Path Number</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-lg font-bold text-indigo-600">
+                                {Math.round((result.numerology.coreNumbers.lifePath / 9) * 100)}%
+                              </div>
+                              <div className="text-xs text-gray-500">Strength</div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      <div className="p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-2xl font-bold text-green-600">{result.numerology.coreNumbers.destiny}</div>
+                            <div className="text-sm text-gray-600">Destiny Number</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-green-600">
+                              {Math.round((result.numerology.coreNumbers.destiny / 9) * 100)}%
+                            </div>
+                            <div className="text-xs text-gray-500">Strength</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-2xl font-bold text-purple-600">{result.numerology.coreNumbers.soul}</div>
-                        <div className="text-sm text-gray-600">Heart Desire Number</div>
+                      <div className="p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-2xl font-bold text-purple-600">{result.numerology.coreNumbers.soul}</div>
+                            <div className="text-sm text-gray-600">Heart Desire Number</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-purple-600">
+                              {Math.round((result.numerology.coreNumbers.soul / 9) * 100)}%
+                            </div>
+                            <div className="text-xs text-gray-500">Strength</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-2xl font-bold text-orange-600">{result.numerology.coreNumbers.personality}</div>
-                        <div className="text-sm text-gray-600">Personality Number</div>
+                      <div className="p-3 bg-gradient-to-r from-orange-50 to-red-50 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-2xl font-bold text-orange-600">{result.numerology.coreNumbers.personality}</div>
+                            <div className="text-sm text-gray-600">Personality Number</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-orange-600">
+                              {Math.round((result.numerology.coreNumbers.personality / 9) * 100)}%
+                            </div>
+                            <div className="text-xs text-gray-500">Strength</div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-2xl font-bold text-blue-600">{result.numerology.coreNumbers.radical}</div>
-                        <div className="text-sm text-gray-600">Radical Number</div>
+                      <div className="p-3 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <div className="text-2xl font-bold text-blue-600">{result.numerology.coreNumbers.radical}</div>
+                            <div className="text-sm text-gray-600">Radical Number</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-lg font-bold text-blue-600">
+                              {Math.round((result.numerology.coreNumbers.radical / 9) * 100)}%
+                            </div>
+                            <div className="text-xs text-gray-500">Strength</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

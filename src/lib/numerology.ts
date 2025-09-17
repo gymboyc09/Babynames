@@ -1,5 +1,6 @@
 export interface NumerologyResult {
   name: string;
+  dateOfBirth?: string;       // Optional DOB for Life Path calculation
   pythagorean: {
     totalValue: number;
     reducedValue: number;
@@ -19,10 +20,11 @@ export interface NumerologyResult {
     letterBreakdown: { letter: string; value: number }[];
   };
   coreNumbers: {
-    destiny: number;           // Sum of all letters (full name)
-    soul: number;             // Sum of vowels only (Heart Desire)
-    personality: number;      // Sum of consonants only
-    radical: number;          // Sum of first name only
+    lifePath: number;         // Sum of birth date (DOB based)
+    destiny: number;          // Sum of all letters (full name)
+    soul: number;            // Sum of vowels only (Heart Desire)
+    personality: number;     // Sum of consonants only
+    radical: number;         // Sum of first name only
   };
 }
 
@@ -37,7 +39,7 @@ export interface PhonologyResult {
 }
 
 // Numerology calculation functions
-export function calculateNumerology(name: string): NumerologyResult {
+export function calculateNumerology(name: string, dateOfBirth?: string): NumerologyResult {
   const cleanName = name.toLowerCase().replace(/[^a-z]/g, '');
   
   // Pythagorean letter values
@@ -75,10 +77,11 @@ export function calculateNumerology(name: string): NumerologyResult {
   const chaldeanReduced = reduceToSingleDigit(chaldeanTotal);
 
   // Calculate core numbers
-  const coreNumbers = calculateCoreNumbers(cleanName);
+  const coreNumbers = calculateCoreNumbers(cleanName, dateOfBirth);
 
   return {
     name: name,
+    dateOfBirth: dateOfBirth,
     pythagorean: {
       totalValue: pythagoreanTotal,
       reducedValue: pythagoreanReduced,
@@ -101,7 +104,7 @@ export function calculateNumerology(name: string): NumerologyResult {
   };
 }
 
-function calculateCoreNumbers(name: string) {
+function calculateCoreNumbers(name: string, dateOfBirth?: string) {
   const vowels = 'aeiou';
   const consonants = 'bcdfghjklmnpqrstvwxyz';
   
@@ -129,12 +132,48 @@ function calculateCoreNumbers(name: string) {
     firstNameSum += getLetterValue(letter);
   }
   
+  // Calculate Life Path Number from birth date
+  let lifePath = 0;
+  if (dateOfBirth) {
+    lifePath = calculateLifePathNumber(dateOfBirth);
+  }
+  
   return {
+    lifePath: lifePath,                                        // Birth date based
     destiny: reduceToSingleDigit(vowelSum + consonantSum),    // All letters (full name)
     soul: reduceToSingleDigit(vowelSum),                      // Vowels only (Heart Desire)
     personality: reduceToSingleDigit(consonantSum),           // Consonants only
     radical: reduceToSingleDigit(firstNameSum)                // First name only
   };
+}
+
+function calculateLifePathNumber(dateOfBirth: string): number {
+  // Parse date of birth (format: YYYY-MM-DD or DD/MM/YYYY or MM/DD/YYYY)
+  let day: number, month: number, year: number;
+  
+  if (dateOfBirth.includes('/')) {
+    // Handle DD/MM/YYYY or MM/DD/YYYY format
+    const parts = dateOfBirth.split('/');
+    if (parts[0].length === 4) {
+      // YYYY/MM/DD format
+      [year, month, day] = parts.map(Number);
+    } else {
+      // Assume DD/MM/YYYY format
+      [day, month, year] = parts.map(Number);
+    }
+  } else if (dateOfBirth.includes('-')) {
+    // Handle YYYY-MM-DD format
+    const parts = dateOfBirth.split('-');
+    [year, month, day] = parts.map(Number);
+  } else {
+    return 0; // Invalid format
+  }
+  
+  // Calculate Life Path Number
+  let lifePath = day + month + year;
+  
+  // Reduce to single digit (except master numbers)
+  return reduceToSingleDigit(lifePath);
 }
 
 function getLetterValue(letter: string): number {
