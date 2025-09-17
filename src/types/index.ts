@@ -59,10 +59,10 @@ export interface NameAnalysis {
       letterBreakdown: { letter: string; value: number }[];
     };
     coreNumbers: {
-      lifePath: number;
-      destiny: number;
-      soul: number;
-      personality: number;
+      destiny: number;           // Sum of all letters (full name)
+      soul: number;             // Sum of vowels only (Heart Desire)
+      personality: number;      // Sum of consonants only
+      radical: number;          // Sum of first name only
     };
   };
   phonology: {
