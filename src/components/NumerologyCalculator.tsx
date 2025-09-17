@@ -251,7 +251,7 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Core Numbers</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">Core Numbers (Chaldean System)</h4>
                     <div className="grid grid-cols-2 gap-4">
                       {result.numerology.coreNumbers.lifePath > 0 && (
                         <div className="p-3 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-lg">

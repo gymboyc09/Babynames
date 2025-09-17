@@ -117,9 +117,9 @@ function calculateCoreNumbers(name: string, dateOfBirth?: string) {
   let consonantSum = 0;
   let firstNameSum = 0;
   
-  // Calculate for full name
+  // Calculate for full name using Chaldean values
   for (const letter of fullName) {
-    const value = getLetterValue(letter);
+    const value = getChaldeanLetterValue(letter);
     if (vowels.includes(letter)) {
       vowelSum += value;
     } else if (consonants.includes(letter)) {
@@ -127,9 +127,9 @@ function calculateCoreNumbers(name: string, dateOfBirth?: string) {
     }
   }
   
-  // Calculate for first name only
+  // Calculate for first name only using Chaldean values
   for (const letter of firstName) {
-    firstNameSum += getLetterValue(letter);
+    firstNameSum += getChaldeanLetterValue(letter);
   }
   
   // Calculate Life Path Number from birth date
@@ -140,10 +140,10 @@ function calculateCoreNumbers(name: string, dateOfBirth?: string) {
   
   return {
     lifePath: lifePath,                                        // Birth date based
-    destiny: reduceToSingleDigit(vowelSum + consonantSum),    // All letters (full name)
-    soul: reduceToSingleDigit(vowelSum),                      // Vowels only (Heart Desire)
-    personality: reduceToSingleDigit(consonantSum),           // Consonants only
-    radical: reduceToSingleDigit(firstNameSum)                // First name only
+    destiny: reduceToSingleDigit(vowelSum + consonantSum),    // All letters (full name) - Chaldean
+    soul: reduceToSingleDigit(vowelSum),                      // Vowels only (Heart Desire) - Chaldean
+    personality: reduceToSingleDigit(consonantSum),           // Consonants only - Chaldean
+    radical: reduceToSingleDigit(firstNameSum)                // First name only - Chaldean
   };
 }
 
@@ -181,6 +181,15 @@ function getLetterValue(letter: string): number {
     'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9,
     'j': 1, 'k': 2, 'l': 3, 'm': 4, 'n': 5, 'o': 6, 'p': 7, 'q': 8, 'r': 9,
     's': 1, 't': 2, 'u': 3, 'v': 4, 'w': 5, 'x': 6, 'y': 7, 'z': 8
+  };
+  return values[letter] || 0;
+}
+
+function getChaldeanLetterValue(letter: string): number {
+  const values: { [key: string]: number } = {
+    'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 8, 'g': 3, 'h': 5, 'i': 1,
+    'j': 1, 'k': 2, 'l': 3, 'm': 4, 'n': 5, 'o': 7, 'p': 8, 'q': 1, 'r': 2,
+    's': 3, 't': 4, 'u': 6, 'v': 6, 'w': 6, 'x': 5, 'y': 1, 'z': 7
   };
   return values[letter] || 0;
 }
