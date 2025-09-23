@@ -37,16 +37,35 @@ export function NameSuggestionEngine() {
     }
   };
 
-  // Generate random ID for URL protection
-  const generateRandomId = () => {
-    return Math.random().toString(36).substr(2, 9);
-  };
-
-  const handleAnalyzeName = (name: string) => {
-    const randomId = generateRandomId();
-    // Open calculator in new tab with name and random ID for AdSense refresh
-    const url = `/?name=${encodeURIComponent(name)}&rid=${randomId}&tab=calculator`;
-    window.open(url, '_blank');
+  const handleAnalyzeName = async (name: string) => {
+    try {
+      // Generate secure token from server
+      const response = await fetch('/api/generate-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok && data.token) {
+        // Open calculator in new tab with secure token for AdSense refresh
+        const url = `/?token=${data.token}&tab=calculator`;
+        window.open(url, '_blank');
+      } else {
+        console.error('Failed to generate token:', data.error);
+        // Fallback to simple approach if token generation fails
+        const url = `/?name=${encodeURIComponent(name)}&tab=calculator`;
+        window.open(url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error generating token:', error);
+      // Fallback to simple approach if token generation fails
+      const url = `/?name=${encodeURIComponent(name)}&tab=calculator`;
+      window.open(url, '_blank');
+    }
   };
 
 
