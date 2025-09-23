@@ -44,8 +44,9 @@ export function NameSuggestionEngine() {
 
   const handleAnalyzeName = (name: string) => {
     const randomId = generateRandomId();
-    // Navigate to calculator with name and random ID
-    router.push(`/?name=${encodeURIComponent(name)}&rid=${randomId}&tab=calculator`);
+    // Open calculator in new tab with name and random ID for AdSense refresh
+    const url = `/?name=${encodeURIComponent(name)}&rid=${randomId}&tab=calculator`;
+    window.open(url, '_blank');
   };
 
 
