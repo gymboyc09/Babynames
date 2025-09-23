@@ -26,39 +26,13 @@ export default function Home() {
     setActiveTab('calculator')
   }
 
-  // Handle URL parameters for direct navigation to calculator
+  // Handle URL parameters for direct navigation to calculator (legacy support)
   useEffect(() => {
     if (router.isReady) {
-      const { name, token, tab } = router.query
+      const { name, tab } = router.query
       
-      if (token && typeof token === 'string') {
-        // Validate secure token
-        fetch('/api/validate-token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.valid && data.name) {
-            setCalculatorName(data.name)
-            setActiveTab('calculator')
-          } else {
-            console.error('Invalid token:', data.error)
-            // Redirect to main page if token is invalid
-            router.push('/')
-          }
-        })
-        .catch(error => {
-          console.error('Token validation error:', error)
-          router.push('/')
-        })
-      } else if (name && typeof name === 'string') {
-        // Fallback for direct name parameter (less secure)
+      if (name && typeof name === 'string') {
         setCalculatorName(decodeURIComponent(name))
-        setActiveTab('calculator')
       }
       
       if (tab && typeof tab === 'string' && tab === 'calculator') {

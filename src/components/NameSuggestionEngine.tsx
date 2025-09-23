@@ -51,19 +51,19 @@ export function NameSuggestionEngine() {
       const data = await response.json();
       
       if (response.ok && data.token) {
-        // Open calculator in new tab with secure token for AdSense refresh
-        const url = `/?token=${data.token}&tab=calculator`;
+        // Open dedicated calculator page in new tab with secure token for AdSense refresh
+        const url = `/calculator?token=${data.token}`;
         window.open(url, '_blank');
       } else {
         console.error('Failed to generate token:', data.error);
         // Fallback to simple approach if token generation fails
-        const url = `/?name=${encodeURIComponent(name)}&tab=calculator`;
+        const url = `/calculator?name=${encodeURIComponent(name)}`;
         window.open(url, '_blank');
       }
     } catch (error) {
       console.error('Error generating token:', error);
       // Fallback to simple approach if token generation fails
-      const url = `/?name=${encodeURIComponent(name)}&tab=calculator`;
+      const url = `/calculator?name=${encodeURIComponent(name)}`;
       window.open(url, '_blank');
     }
   };
