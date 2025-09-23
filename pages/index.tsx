@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSession, signIn } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import { Header } from '@/components/Header'
 import { MobileSidebar } from '@/components/MobileSidebar'
 import { Footer } from '@/components/Footer'
@@ -14,6 +15,7 @@ import { NavigationTab } from '@/types'
 
 export default function Home() {
   const { data: session, status } = useSession()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<NavigationTab>('suggestions')
   const [loading, setLoading] = useState(false)
   const [calculatorName, setCalculatorName] = useState('')
@@ -23,6 +25,21 @@ export default function Home() {
     setCalculatorName(name)
     setActiveTab('calculator')
   }
+
+  // Handle URL parameters for direct navigation to calculator
+  useEffect(() => {
+    if (router.isReady) {
+      const { name, tab } = router.query
+      
+      if (name && typeof name === 'string') {
+        setCalculatorName(decodeURIComponent(name))
+      }
+      
+      if (tab && typeof tab === 'string' && tab === 'calculator') {
+        setActiveTab('calculator')
+      }
+    }
+  }, [router.isReady, router.query])
 
   // Handle tab changes with authentication checks
   const handleTabChange = (tab: NavigationTab) => {

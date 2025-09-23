@@ -1,56 +1,16 @@
 {
   "polyfillFiles": [
-    "static/chunks/polyfills-42372ed130431b0a.js"
+    "static/chunks/polyfills.js"
   ],
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/p0t1oK76QKAaHe99JaCbV/_buildManifest.js",
-    "static/p0t1oK76QKAaHe99JaCbV/_ssgManifest.js"
+    "static/development/_buildManifest.js",
+    "static/development/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
-    "/": [
-      "static/chunks/webpack-ee7e63bc15b31913.js",
-      "static/chunks/framework-64ad27b21261a9ce.js",
-      "static/chunks/main-e5e349bb2d39155a.js",
-      "static/chunks/261-9e95377db3530205.js",
-      "static/chunks/pages/index-a3f6a3a9dba97ac9.js"
-    ],
-    "/_app": [
-      "static/chunks/webpack-ee7e63bc15b31913.js",
-      "static/chunks/framework-64ad27b21261a9ce.js",
-      "static/chunks/main-e5e349bb2d39155a.js",
-      "static/css/7607c638e42e8657.css",
-      "static/chunks/pages/_app-d275c94cc2acb0af.js"
-    ],
-    "/_error": [
-      "static/chunks/webpack-ee7e63bc15b31913.js",
-      "static/chunks/framework-64ad27b21261a9ce.js",
-      "static/chunks/main-e5e349bb2d39155a.js",
-      "static/chunks/pages/_error-7a92967bea80186d.js"
-    ],
-    "/about": [
-      "static/chunks/webpack-ee7e63bc15b31913.js",
-      "static/chunks/framework-64ad27b21261a9ce.js",
-      "static/chunks/main-e5e349bb2d39155a.js",
-      "static/chunks/261-9e95377db3530205.js",
-      "static/chunks/pages/about-8a35164e777902ba.js"
-    ],
-    "/contact": [
-      "static/chunks/webpack-ee7e63bc15b31913.js",
-      "static/chunks/framework-64ad27b21261a9ce.js",
-      "static/chunks/main-e5e349bb2d39155a.js",
-      "static/chunks/261-9e95377db3530205.js",
-      "static/chunks/pages/contact-61693dbb29b91413.js"
-    ],
-    "/privacy": [
-      "static/chunks/webpack-ee7e63bc15b31913.js",
-      "static/chunks/framework-64ad27b21261a9ce.js",
-      "static/chunks/main-e5e349bb2d39155a.js",
-      "static/chunks/261-9e95377db3530205.js",
-      "static/chunks/pages/privacy-c79bff98ebc9ce2f.js"
-    ]
+    "/_app": []
   },
   "ampFirstPages": []
 }

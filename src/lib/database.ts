@@ -286,3 +286,39 @@ export async function removeRecentCalculation(userId: string, nameId: string): P
     return false;
   }
 }
+
+// Names collection functions
+export async function searchNames(searchTerm: string, limit: number = 10): Promise<string[]> {
+  try {
+    const { db } = await connectToDatabase();
+    const names = await db.collection('names')
+      .find({ 
+        name: { 
+          $regex: searchTerm, 
+          $options: 'i' 
+        } 
+      })
+      .limit(limit)
+      .toArray();
+    
+    return names.map(doc => doc.name);
+  } catch (error) {
+    console.error('Error searching names:', error);
+    return [];
+  }
+}
+
+export async function getAllNames(limit: number = 10): Promise<string[]> {
+  try {
+    const { db } = await connectToDatabase();
+    const names = await db.collection('names')
+      .find({})
+      .limit(limit)
+      .toArray();
+    
+    return names.map(doc => doc.name);
+  } catch (error) {
+    console.error('Error getting all names:', error);
+    return [];
+  }
+}
