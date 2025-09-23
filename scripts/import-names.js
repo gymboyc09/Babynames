@@ -6,6 +6,8 @@ const { MongoClient } = require('mongodb');
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 const DB_NAME = 'babynames';
 
+console.log('Using MongoDB URI:', MONGODB_URI);
+
 async function importNames() {
   let client;
   

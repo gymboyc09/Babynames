@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { nameCategories, nameOrigins } from '@/data/names';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -7,8 +6,6 @@ import { useRouter } from 'next/router';
 
 export function NameSuggestionEngine() {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('Popular');
-  const [selectedOrigin, setSelectedOrigin] = useState<string>('English');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [resultLimit, setResultLimit] = useState<number>(10);
@@ -27,7 +24,7 @@ export function NameSuggestionEngine() {
       const data = await response.json();
       
       if (response.ok) {
-        setSuggestions(data.names);
+        setSuggestions(data.names || []);
       } else {
         console.error('Error fetching names:', data.error);
         setSuggestions([]);
@@ -71,39 +68,7 @@ export function NameSuggestionEngine() {
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Category
-                </label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="All">All Categories</option>
-                  {Object.keys(nameCategories).map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Origin
-                </label>
-                <select
-                  value={selectedOrigin}
-                  onChange={(e) => setSelectedOrigin(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="All">All Origins</option>
-                  {Object.keys(nameOrigins).map(origin => (
-                    <option key={origin} value={origin}>{origin}</option>
-                  ))}
-                </select>
-              </div>
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Number of Results

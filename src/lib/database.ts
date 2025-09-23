@@ -9,12 +9,10 @@ export async function connectToDatabase() {
     return { client, db };
   }
 
-  if (!process.env.MONGODB_URI) {
-    throw new Error('Please add your MongoDB URI to .env.local');
-  }
+  const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017';
 
   try {
-    client = new MongoClient(process.env.MONGODB_URI);
+    client = new MongoClient(mongoUri);
     await client.connect();
     db = client.db('babynames');
     console.log('Connected to MongoDB');
