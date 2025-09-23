@@ -13,12 +13,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Name is required' });
     }
     
-    // Generate secure token
+    const cleanName = name.trim().toLowerCase().replace(/[^a-z0-9]/g, '-');
     const token = generateSecureToken(name.trim());
     
-    res.status(200).json({ token });
+    // Generate SEO-friendly URL
+    const seoUrl = `/calculator/${cleanName}?t=${token}`;
+    
+    res.status(200).json({ 
+      url: seoUrl,
+      token,
+      cleanName 
+    });
   } catch (error) {
-    console.error('Error generating token:', error);
+    console.error('Error generating SEO URL:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 }

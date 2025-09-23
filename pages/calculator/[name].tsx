@@ -3,51 +3,41 @@ import { useRouter } from 'next/router';
 import { NumerologyCalculator } from '@/components/NumerologyCalculator';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
+import { validateToken } from '@/lib/security';
 
 export default function CalculatorPage() {
   const router = useRouter();
+  const { name: urlName, t: token } = router.query;
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (router.isReady) {
-      const { token, name: nameParam } = router.query;
+    if (router.isReady && urlName && token) {
+      const nameParam = urlName as string;
+      const tokenParam = token as string;
       
-      if (token && typeof token === 'string') {
-        // Validate secure token
-        fetch('/api/validate-token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ token }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.valid && data.name) {
-            setName(data.name);
-            setLoading(false);
-          } else {
-            setError('Invalid or expired token');
-            setLoading(false);
-          }
-        })
-        .catch(error => {
-          console.error('Token validation error:', error);
-          setError('Token validation failed');
+      // Validate secure token
+      const validation = validateToken(tokenParam);
+      
+      if (validation.valid && validation.name) {
+        // Verify the name in the URL matches the name in the token
+        if (validation.name.toLowerCase() === nameParam.replace(/-/g, ' ')) {
+          setName(validation.name);
           setLoading(false);
-        });
-      } else if (nameParam && typeof nameParam === 'string') {
-        // Fallback for direct name parameter (less secure)
-        setName(decodeURIComponent(nameParam));
-        setLoading(false);
+        } else {
+          setError('Invalid name in URL');
+          setLoading(false);
+        }
       } else {
-        setError('No valid name or token provided');
+        setError(validation.error || 'Invalid or expired token');
         setLoading(false);
       }
+    } else if (router.isReady) {
+      setError('Missing required parameters');
+      setLoading(false);
     }
-  }, [router.isReady, router.query]);
+  }, [router.isReady, urlName, token]);
 
   if (loading) {
     return (

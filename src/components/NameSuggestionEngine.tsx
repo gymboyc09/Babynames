@@ -39,8 +39,8 @@ export function NameSuggestionEngine() {
 
   const handleAnalyzeName = async (name: string) => {
     try {
-      // Generate secure token from server
-      const response = await fetch('/api/generate-token', {
+      // Generate SEO-friendly URL with secure token
+      const response = await fetch('/api/generate-seo-url', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,20 +50,21 @@ export function NameSuggestionEngine() {
       
       const data = await response.json();
       
-      if (response.ok && data.token) {
-        // Open dedicated calculator page in new tab with secure token for AdSense refresh
-        const url = `/calculator?token=${data.token}`;
-        window.open(url, '_blank');
+      if (response.ok && data.url) {
+        // Open SEO-friendly calculator page in new tab for AdSense refresh
+        window.open(data.url, '_blank');
       } else {
-        console.error('Failed to generate token:', data.error);
-        // Fallback to simple approach if token generation fails
-        const url = `/calculator?name=${encodeURIComponent(name)}`;
+        console.error('Failed to generate SEO URL:', data.error);
+        // Fallback to simple approach if URL generation fails
+        const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const url = `/calculator/${cleanName}`;
         window.open(url, '_blank');
       }
     } catch (error) {
-      console.error('Error generating token:', error);
-      // Fallback to simple approach if token generation fails
-      const url = `/calculator?name=${encodeURIComponent(name)}`;
+      console.error('Error generating SEO URL:', error);
+      // Fallback to simple approach if URL generation fails
+      const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const url = `/calculator/${cleanName}`;
       window.open(url, '_blank');
     }
   };

@@ -11,7 +11,7 @@ export interface TokenData {
 
 export function generateSecureToken(name: string): string {
   const timestamp = Date.now();
-  const expiresAt = timestamp + (5 * 60 * 1000); // 5 minutes expiration
+  const expiresAt = timestamp + (60 * 60 * 1000); // 1 hour expiration
   
   const tokenData: TokenData = {
     name,
