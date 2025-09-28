@@ -3,41 +3,54 @@ import { useRouter } from 'next/router';
 import { NumerologyCalculator } from '@/components/NumerologyCalculator';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { validateToken } from '@/lib/security';
 
 export default function CalculatorPage() {
   const router = useRouter();
-  const { name: urlName, t: token } = router.query;
+  const { name: urlName, s: sessionId } = router.query;
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (router.isReady && urlName && token) {
+    if (router.isReady && urlName && sessionId) {
       const nameParam = urlName as string;
-      const tokenParam = token as string;
+      const sessionParam = sessionId as string;
       
-      // Validate secure token
-      const validation = validateToken(tokenParam);
-      
-      if (validation.valid && validation.name) {
-        // Verify the name in the URL matches the name in the token
-        if (validation.name.toLowerCase() === nameParam.replace(/-/g, ' ')) {
-          setName(validation.name);
-          setLoading(false);
+      // Validate session
+      fetch('/api/validate-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sessionId: sessionParam }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.valid && data.name) {
+          // Verify the name in the URL matches the name in the session
+          const expectedUrlName = data.name.toLowerCase().replace(/[^a-z0-9]/g, '-');
+          if (expectedUrlName === nameParam) {
+            setName(data.name);
+            setLoading(false);
+          } else {
+            setError('Invalid name in URL');
+            setLoading(false);
+          }
         } else {
-          setError('Invalid name in URL');
+          setError(data.error || 'Invalid or expired session');
           setLoading(false);
         }
-      } else {
-        setError(validation.error || 'Invalid or expired token');
+      })
+      .catch(error => {
+        console.error('Session validation error:', error);
+        setError('Session validation failed');
         setLoading(false);
-      }
+      });
     } else if (router.isReady) {
       setError('Missing required parameters');
       setLoading(false);
     }
-  }, [router.isReady, urlName, token]);
+  }, [router.isReady, urlName, sessionId]);
 
   if (loading) {
     return (
