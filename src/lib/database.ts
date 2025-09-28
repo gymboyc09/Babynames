@@ -320,3 +320,30 @@ export async function getAllNames(limit: number = 10): Promise<string[]> {
     return [];
   }
 }
+
+export async function getNamesForSitemap(): Promise<string[]> {
+  try {
+    const { db } = await connectToDatabase();
+    const names = await db.collection('names')
+      .find({})
+      .sort({ name: 1 }) // Sort alphabetically for consistent sitemap
+      .limit(50000) // Limit for sitemap size
+      .toArray();
+    
+    return names.map(doc => doc.name);
+  } catch (error) {
+    console.error('Error getting names for sitemap:', error);
+    return [];
+  }
+}
+
+export async function getTotalNamesCount(): Promise<number> {
+  try {
+    const { db } = await connectToDatabase();
+    const count = await db.collection('names').countDocuments();
+    return count;
+  } catch (error) {
+    console.error('Error getting names count:', error);
+    return 0;
+  }
+}
