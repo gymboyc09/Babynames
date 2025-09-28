@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSession, signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 import { Header } from '@/components/Header'
 import { MobileSidebar } from '@/components/MobileSidebar'
 import { Footer } from '@/components/Footer'
@@ -76,61 +77,75 @@ export default function Home() {
   // Only require login for Favorites, History, Astrology, Settings
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header activeTab={activeTab} onTabChange={handleTabChange} />
-      <MobileSidebar 
-        activeTab={activeTab} 
-        onTabChange={handleTabChange}
-        isOpen={mobileSidebarOpen}
-        onToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-      />
+    <>
+      <Head>
+        <title>Baby Names - Numerology, Astrology & Phonology Analysis</title>
+        <meta name="description" content="Discover the perfect baby name using advanced numerology, astrology, and phonology analysis. Get personalized name suggestions with detailed insights and cultural meanings." />
+        <meta name="keywords" content="baby names, numerology analysis, astrology names, phonology analysis, name suggestions, baby name calculator, name meanings, name vibrations" />
+        <meta property="og:title" content="Baby Names - Numerology, Astrology & Phonology Analysis" />
+        <meta property="og:description" content="Discover the perfect baby name using advanced numerology, astrology, and phonology analysis. Get personalized name suggestions with detailed insights and cultural meanings." />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Baby Names - Numerology, Astrology & Phonology Analysis" />
+        <meta name="twitter:description" content="Discover the perfect baby name using advanced numerology, astrology, and phonology analysis. Get personalized name suggestions with detailed insights and cultural meanings." />
+      </Head>
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Description text */}
-        <div className="text-center mb-8">
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Discover the perfect name for your baby using advanced analysis techniques. 
-            Get personalized suggestions with detailed insights and cultural meanings.
-          </p>
-        </div>
+      <div className="min-h-screen bg-gray-50">
+        <Header activeTab={activeTab} onTabChange={handleTabChange} />
+        <MobileSidebar 
+          activeTab={activeTab} 
+          onTabChange={handleTabChange}
+          isOpen={mobileSidebarOpen}
+          onToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+        />
+        
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Description text */}
+          <div className="text-center mb-8">
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Discover the perfect name for your baby using advanced analysis techniques. 
+              Get personalized suggestions with detailed insights and cultural meanings.
+            </p>
+          </div>
 
-        {/* Main Content */}
-        {activeTab === 'calculator' && <NumerologyCalculator initialName={calculatorName} />}
-        {activeTab === 'suggestions' && <NameSuggestionEngine />}
-        {activeTab === 'favorites' && <FavoritesList onNavigateToCalculator={handleNavigateToCalculator} />}
-        {activeTab === 'history' && <RecentCalculations onNavigateToCalculator={handleNavigateToCalculator} />}
-        {activeTab === 'astrology' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Star className="h-5 w-5 text-yellow-600" />
-                Astrology Integration
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                Astrology features are coming soon! This will include birth chart analysis, 
-                astrological compatibility with names, and personalized recommendations 
-                based on planetary positions.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-        {activeTab === 'settings' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-600">
-                Settings and preferences will be available here soon.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </main>
-      
-      <Footer />
-    </div>
+          {/* Main Content */}
+          {activeTab === 'calculator' && <NumerologyCalculator initialName={calculatorName} />}
+          {activeTab === 'suggestions' && <NameSuggestionEngine />}
+          {activeTab === 'favorites' && <FavoritesList onNavigateToCalculator={handleNavigateToCalculator} />}
+          {activeTab === 'history' && <RecentCalculations onNavigateToCalculator={handleNavigateToCalculator} />}
+          {activeTab === 'astrology' && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-yellow-600" />
+                  Astrology Integration
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Astrology features are coming soon! This will include birth chart analysis, 
+                  astrological compatibility with names, and personalized recommendations 
+                  based on planetary positions.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+          {activeTab === 'settings' && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Settings</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600">
+                  Settings and preferences will be available here soon.
+                </p>
+              </CardContent>
+            </Card>
+          )}
+        </main>
+        
+        <Footer />
+      </div>
+    </>
   )
 }

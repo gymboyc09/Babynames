@@ -292,7 +292,7 @@ export async function searchNames(searchTerm: string, limit: number = 10): Promi
     const names = await db.collection('names')
       .find({ 
         name: { 
-          $regex: searchTerm, 
+          $regex: `^${searchTerm}`, 
           $options: 'i' 
         } 
       })
