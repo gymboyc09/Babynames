@@ -67,9 +67,47 @@ export default function Home() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
-      </div>
+      <>
+        <Head>
+          <title>Baby Names - Numerology, Astrology & Phonology Analysis</title>
+          <meta name="description" content="Discover the perfect baby name using advanced numerology, astrology, and phonology analysis. Get personalized name suggestions with detailed insights and cultural meanings." />
+          <meta name="keywords" content="baby names, numerology analysis, astrology names, phonology analysis, name suggestions, baby name calculator, name meanings, name vibrations" />
+          <meta property="og:title" content="Baby Names - Numerology, Astrology & Phonology Analysis" />
+          <meta property="og:description" content="Discover the perfect baby name using advanced numerology, astrology, and phonology analysis. Get personalized name suggestions with detailed insights and cultural meanings." />
+          <meta property="og:type" content="website" />
+          <meta name="twitter:card" content="summary_large_image" />
+          <meta name="twitter:title" content="Baby Names - Numerology, Astrology & Phonology Analysis" />
+          <meta name="twitter:description" content="Discover the perfect baby name using advanced numerology, astrology, and phonology analysis. Get personalized name suggestions with detailed insights and cultural meanings." />
+        </Head>
+        
+        <div className="min-h-screen bg-gray-50">
+          <Header activeTab="suggestions" onTabChange={() => {}} />
+          
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                Baby Name Analysis
+              </h1>
+              <p className="text-lg text-gray-600 mb-6">
+                Loading your personalized name analysis tools...
+              </p>
+            </div>
+            
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                </div>
+                <p className="text-blue-700 text-center">
+                  Preparing your advanced numerology, astrology, and phonology analysis tools...
+                </p>
+              </div>
+            </div>
+          </main>
+          
+          <Footer />
+        </div>
+      </>
     )
   }
 
