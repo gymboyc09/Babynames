@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -11,8 +12,28 @@ export default function PrivacyPolicy() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header activeTab="suggestions" onTabChange={handleTabChange} />
+    <>
+      <Head>
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEE4YRMFZL"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-MEE4YRMFZL');
+            `,
+          }}
+        />
+        
+        <title>Privacy Policy - Baby Names Analysis</title>
+        <meta name="description" content="Learn about our privacy policy and how we protect your data when using our baby name analysis platform with numerology, astrology, and phonology features." />
+        <meta name="keywords" content="privacy policy baby names, data protection numerology analysis, astrology names privacy" />
+      </Head>
+      
+      <div className="min-h-screen bg-gray-50">
+        <Header activeTab="suggestions" onTabChange={handleTabChange} />
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
@@ -153,6 +174,7 @@ export default function PrivacyPolicy() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }

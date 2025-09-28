@@ -117,6 +117,19 @@ export default function Home() {
   return (
     <>
       <Head>
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEE4YRMFZL"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-MEE4YRMFZL');
+            `,
+          }}
+        />
+        
         <title>Baby Names - Numerology, Astrology & Phonology Analysis</title>
         <meta name="description" content="Discover the perfect baby name using advanced numerology, astrology, and phonology analysis. Get personalized name suggestions with detailed insights and cultural meanings." />
         <meta name="keywords" content="baby names, numerology analysis, astrology names, phonology analysis, name suggestions, baby name calculator, name meanings, name vibrations" />

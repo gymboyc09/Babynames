@@ -1,4 +1,5 @@
 import React from 'react';
+import Head from 'next/head';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -11,8 +12,28 @@ export default function AboutUs() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header activeTab="suggestions" onTabChange={handleTabChange} />
+    <>
+      <Head>
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEE4YRMFZL"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-MEE4YRMFZL');
+            `,
+          }}
+        />
+        
+        <title>About Us - Baby Names Analysis</title>
+        <meta name="description" content="Learn about our advanced baby name analysis platform that combines numerology, astrology, and phonology to help parents find the perfect name for their child." />
+        <meta name="keywords" content="about baby names, numerology analysis, astrology names, phonology analysis, baby name calculator" />
+      </Head>
+      
+      <div className="min-h-screen bg-gray-50">
+        <Header activeTab="suggestions" onTabChange={handleTabChange} />
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
@@ -119,6 +140,7 @@ export default function AboutUs() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }

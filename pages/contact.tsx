@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Head from 'next/head';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -43,8 +44,28 @@ export default function ContactUs() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header activeTab="suggestions" onTabChange={handleTabChange} />
+    <>
+      <Head>
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEE4YRMFZL"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-MEE4YRMFZL');
+            `,
+          }}
+        />
+        
+        <title>Contact Us - Baby Names Analysis</title>
+        <meta name="description" content="Get in touch with our baby name analysis team. We're here to help you find the perfect name using numerology, astrology, and phonology analysis." />
+        <meta name="keywords" content="contact baby names, numerology analysis support, astrology names help, phonology analysis contact" />
+      </Head>
+      
+      <div className="min-h-screen bg-gray-50">
+        <Header activeTab="suggestions" onTabChange={handleTabChange} />
       
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
@@ -225,6 +246,7 @@ export default function ContactUs() {
       </main>
 
       <Footer />
-    </div>
+      </div>
+    </>
   );
 }

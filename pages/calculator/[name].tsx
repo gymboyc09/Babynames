@@ -191,6 +191,19 @@ export default function CalculatorPage() {
   return (
     <>
       <Head>
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-MEE4YRMFZL"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-MEE4YRMFZL');
+            `,
+          }}
+        />
+        
         <title>Numerology, Astrology, Phonology Name Analysis for {name}</title>
         <meta name="description" content={`Numerology name analysis for ${name} - Discover the hidden meanings, characteristics, and vibrations of the name ${name} through advanced numerology, astrology, and phonology analysis.`} />
         <meta name="keywords" content={`numerology name analysis for ${name}, astrology name analysis for ${name}, phonology name analysis for ${name}, ${name} name meaning, ${name} numerology, ${name} astrology, ${name} phonology`} />
