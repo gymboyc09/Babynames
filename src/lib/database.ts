@@ -433,23 +433,32 @@ export async function listGoogleUsers(params: { skip?: number; limit?: number; }
   try {
     const { db } = await connectToDatabase();
     const { skip = 0, limit = 50 } = params || {} as any;
-    // Include all users who have logged in at least once (have an email)
-    const filter: any = { email: { $exists: true } };
-    const cursor = db.collection('userData').find(filter).sort({ lastLoginAt: -1 }).skip(skip).limit(limit);
-    const [docs, total] = await Promise.all([
-      cursor.toArray(),
-      db.collection('userData').countDocuments(filter),
-    ]);
-    const users: AdminUser[] = docs.map((d: any) => ({
-      id: d.id,
-      email: d.email,
-      isAdmin: !!d.isAdmin,
-      isBlocked: !!d.isBlocked,
-      provider: d.provider,
-      createdAt: d.createdAt,
-      updatedAt: d.updatedAt,
-      lastLoginAt: d.lastLoginAt,
-    }));
+    // Include all users who have logged in at least once (have an email) and de-duplicate by email
+    const matchStage: any = { $match: { email: { $exists: true } } };
+    const sortStage: any = { $sort: { lastLoginAt: -1 } };
+    const groupStage: any = { $group: { _id: '$email', doc: { $first: '$$ROOT' } } };
+    const projectStage: any = { $project: { _id: 0, doc: 1 } };
+
+    const pipeline = [matchStage, sortStage, groupStage, projectStage, { $skip: skip }, { $limit: limit }];
+    const groups = await db.collection('userData').aggregate(pipeline).toArray();
+
+    // Total distinct emails
+    const totalAgg = await db.collection('userData').aggregate([matchStage, groupStage, { $count: 'total' }]).toArray();
+    const total = totalAgg.length > 0 ? totalAgg[0].total : 0;
+
+    const users: AdminUser[] = groups.map((g: any) => {
+      const d = g.doc;
+      return {
+        id: d.id,
+        email: d.email,
+        isAdmin: !!d.isAdmin,
+        isBlocked: !!d.isBlocked,
+        provider: d.provider,
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
+        lastLoginAt: d.lastLoginAt,
+      } as AdminUser;
+    });
     return { users, total };
   } catch (error) {
     console.error('Error listing users:', error);
