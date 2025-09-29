@@ -39,7 +39,7 @@ export function TrendingNames() {
         <div className="flex items-center justify-between">
           <CardTitle>Trending Names ({names.length})</CardTitle>
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={toggleSort} title={sortAsc ? 'Sort Z-A' : 'Sort A-Z'}>
+            <Button variant="outline" onClick={toggleSort}>
               {sortAsc ? '↑' : '↓'}
             </Button>
             <Button onClick={fetchTrending} disabled={loading}>Refresh</Button>
