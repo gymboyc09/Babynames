@@ -347,3 +347,136 @@ export async function getTotalNamesCount(): Promise<number> {
     return 0;
   }
 }
+
+// Admin: Names management
+export async function getNamesPage(params: { search?: string; startsWith?: boolean; skip?: number; limit?: number }): Promise<{ names: string[]; total: number; }>{
+  try {
+    const { db } = await connectToDatabase();
+    const { search = '', startsWith = false, skip = 0, limit = 50 } = params || {} as any;
+    const filter: any = {};
+    if (search && search.trim()) {
+      const pattern = startsWith ? `^${search.trim()}` : `${search.trim()}`;
+      filter.name = { $regex: pattern, $options: 'i' };
+    }
+    const cursor = db.collection('names').find(filter).skip(skip).limit(limit);
+    const [docs, total] = await Promise.all([
+      cursor.toArray(),
+      db.collection('names').countDocuments(filter),
+    ]);
+    return { names: docs.map((d: any) => d.name), total };
+  } catch (error) {
+    console.error('Error paging names:', error);
+    return { names: [], total: 0 };
+  }
+}
+
+export async function addNamesBulk(names: string[]): Promise<{ inserted: number; skipped: number; }>{
+  if (!names || names.length === 0) return { inserted: 0, skipped: 0 };
+  try {
+    const { db } = await connectToDatabase();
+    const normalized = Array.from(new Set(names
+      .map(n => (n || '').toString().trim())
+      .filter(n => n.length > 0)));
+    if (normalized.length === 0) return { inserted: 0, skipped: 0 };
+    // Avoid duplicates by checking existing
+    const existingDocs = await db.collection('names').find({ name: { $in: normalized } }).project({ name: 1 }).toArray();
+    const existing = new Set(existingDocs.map((d: any) => d.name));
+    const toInsert = normalized.filter(n => !existing.has(n)).map(n => ({ name: n }));
+    if (toInsert.length > 0) {
+      await db.collection('names').insertMany(toInsert);
+    }
+    return { inserted: toInsert.length, skipped: normalized.length - toInsert.length };
+  } catch (error) {
+    console.error('Error adding names bulk:', error);
+    return { inserted: 0, skipped: 0 };
+  }
+}
+
+export async function updateNameValue(oldName: string, newName: string): Promise<boolean>{
+  try {
+    const { db } = await connectToDatabase();
+    const res = await db.collection('names').updateOne({ name: oldName }, { $set: { name: newName } });
+    return res.matchedCount > 0;
+  } catch (error) {
+    console.error('Error updating name:', error);
+    return false;
+  }
+}
+
+export async function deleteNamesBulk(names: string[]): Promise<number>{
+  if (!names || names.length === 0) return 0;
+  try {
+    const { db } = await connectToDatabase();
+    const res = await db.collection('names').deleteMany({ name: { $in: names } });
+    return res.deletedCount ?? 0;
+  } catch (error) {
+    console.error('Error deleting names:', error);
+    return 0;
+  }
+}
+
+// Admin: Users management
+export interface AdminUser {
+  id: string;
+  email: string;
+  isAdmin?: boolean;
+  isBlocked?: boolean;
+  provider?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  lastLoginAt?: Date;
+}
+
+export async function listGoogleUsers(params: { skip?: number; limit?: number; }): Promise<{ users: AdminUser[]; total: number; }>{
+  try {
+    const { db } = await connectToDatabase();
+    const { skip = 0, limit = 50 } = params || {} as any;
+    const filter: any = { provider: 'google' };
+    const cursor = db.collection('userData').find(filter).skip(skip).limit(limit);
+    const [docs, total] = await Promise.all([
+      cursor.toArray(),
+      db.collection('userData').countDocuments(filter),
+    ]);
+    const users: AdminUser[] = docs.map((d: any) => ({
+      id: d.id,
+      email: d.email,
+      isAdmin: !!d.isAdmin,
+      isBlocked: !!d.isBlocked,
+      provider: d.provider,
+      createdAt: d.createdAt,
+      updatedAt: d.updatedAt,
+      lastLoginAt: d.lastLoginAt,
+    }));
+    return { users, total };
+  } catch (error) {
+    console.error('Error listing users:', error);
+    return { users: [], total: 0 };
+  }
+}
+
+export async function setUsersBlocked(ids: string[], blocked: boolean): Promise<number>{
+  if (!ids || ids.length === 0) return 0;
+  try {
+    const { db } = await connectToDatabase();
+    const res = await db.collection('userData').updateMany(
+      { id: { $in: ids } },
+      { $set: { isBlocked: blocked, updatedAt: new Date() } }
+    );
+    return res.modifiedCount ?? 0;
+  } catch (error) {
+    console.error('Error blocking/unblocking users:', error);
+    return 0;
+  }
+}
+
+export async function deleteUsers(ids: string[]): Promise<number>{
+  if (!ids || ids.length === 0) return 0;
+  try {
+    const { db } = await connectToDatabase();
+    const res = await db.collection('userData').deleteMany({ id: { $in: ids } });
+    return res.deletedCount ?? 0;
+  } catch (error) {
+    console.error('Error deleting users:', error);
+    return 0;
+  }
+}
