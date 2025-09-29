@@ -163,7 +163,6 @@ export default function Home() {
         {/* Main Content */}
           {activeTab === 'calculator' && <NumerologyCalculator initialName={calculatorName} />}
           {activeTab === 'suggestions' && <NameSuggestionEngine />}
-        {activeTab === 'trending' && <TrendingNames />}
           {activeTab === 'favorites' && <FavoritesList onNavigateToCalculator={handleNavigateToCalculator} />}
           {activeTab === 'history' && <RecentCalculations onNavigateToCalculator={handleNavigateToCalculator} />}
           {activeTab === 'astrology' && (

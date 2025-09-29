@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 export function TrendingNames() {
   const [names, setNames] = React.useState<string[]>([])
   const [loading, setLoading] = React.useState(false)
+  const [sortAsc, setSortAsc] = React.useState(true)
 
   const fetchTrending = React.useCallback(async () => {
     setLoading(true)
@@ -19,10 +20,31 @@ export function TrendingNames() {
 
   React.useEffect(() => { fetchTrending() }, [fetchTrending])
 
+  const toggleSort = () => {
+    setSortAsc(prev => !prev)
+    setNames(prev => {
+      const sorted = [...prev].sort((a,b) => a.localeCompare(b))
+      return sortAsc ? sorted.reverse() : sorted
+    })
+  }
+
+  const analyze = (name: string) => {
+    const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-')
+    window.open(`/calculator/${cleanName}`, '_blank')
+  }
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Trending Names ({names.length})</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>Trending Names ({names.length})</CardTitle>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={toggleSort} title={sortAsc ? 'Sort Z-A' : 'Sort A-Z'}>
+              {sortAsc ? '↑' : '↓'}
+            </Button>
+            <Button onClick={fetchTrending} disabled={loading}>Refresh</Button>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         {loading ? (
@@ -36,6 +58,7 @@ export function TrendingNames() {
                 <tr className="bg-gray-50">
                   <th className="border border-gray-300 px-4 py-2 text-left font-semibold">#</th>
                   <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Name</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -43,15 +66,15 @@ export function TrendingNames() {
                   <tr key={`${n}-${i}`} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2">{i + 1}</td>
                     <td className="border border-gray-300 px-4 py-2 font-medium">{n}</td>
+                    <td className="border border-gray-300 px-4 py-2">
+                      <Button variant="outline" size="sm" onClick={() => analyze(n)}>Analyze</Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         )}
-        <div className="mt-4">
-          <Button onClick={fetchTrending} disabled={loading}>Refresh</Button>
-        </div>
       </CardContent>
     </Card>
   )

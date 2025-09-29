@@ -33,6 +33,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         lastmod: new Date().toISOString().split('T')[0],
         changefreq: 'yearly',
         priority: '0.5'
+      },
+      {
+        url: `${baseUrl}/trending`,
+        lastmod: new Date().toISOString().split('T')[0],
+        changefreq: 'daily',
+        priority: '0.9'
       }
     ];
 

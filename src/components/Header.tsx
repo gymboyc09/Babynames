@@ -97,9 +97,15 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
             
             {/* Navigation tabs */}
             {tabs.map((tab) => (
-              <button
+              <a
                 key={tab.id}
-                onClick={() => onTabChange(tab.id)}
+                href={tab.id === 'trending' ? '/trending' : '#'}
+                onClick={(e) => {
+                  if (tab.id !== 'trending') {
+                    e.preventDefault();
+                    onTabChange(tab.id)
+                  }
+                }}
                 className={`py-4 px-2 border-b-2 font-medium text-sm whitespace-nowrap flex-shrink-0 ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
@@ -107,7 +113,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 }`}
               >
                 {tab.label}
-              </button>
+              </a>
             ))}
           </nav>
         </div>
