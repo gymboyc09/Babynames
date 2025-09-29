@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../api/auth/[...nextauth]'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
+import { QuickFilter } from '@/components/QuickFilter'
 
 export async function getServerSideProps(context: any) {
   const session = await getServerSession(context.req, context.res, authOptions)
@@ -50,6 +51,7 @@ function NamesTab() {
   const [total, setTotal] = React.useState(0)
   const [names, setNames] = React.useState<string[]>([])
   const [selected, setSelected] = React.useState<Record<string, boolean>>({})
+  const [quick, setQuick] = React.useState('')
   const [oldName, setOldName] = React.useState('')
   const [newName, setNewName] = React.useState('')
   const [bulkText, setBulkText] = React.useState('')
@@ -157,6 +159,9 @@ function NamesTab() {
             <button disabled={(page*pageSize)>=total} onClick={() => setPage(p => p+1)} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
           </div>
         </div>
+        <div className="p-3 flex justify-end">
+          <QuickFilter value={quick} onChange={setQuick} placeholder="Filter table..." className="w-full md:w-72" />
+        </div>
         <table className="w-full text-left">
           <thead>
             <tr className="bg-gray-100">
@@ -165,7 +170,7 @@ function NamesTab() {
             </tr>
           </thead>
           <tbody>
-            {names.map(n => (
+            {names.filter(n => n.toLowerCase().includes(quick.toLowerCase())).map(n => (
               <tr key={n} className="border-t">
                 <td className="p-2"><input type="checkbox" checked={!!selected[n]} onChange={e => setSelected(prev => ({ ...prev, [n]: e.target.checked }))} /></td>
                 <td className="p-2 font-medium">{n}</td>
@@ -184,6 +189,7 @@ function UsersTab() {
   const [total, setTotal] = React.useState(0)
   const [users, setUsers] = React.useState<any[]>([])
   const [selected, setSelected] = React.useState<Record<string, boolean>>({})
+  const [quick, setQuick] = React.useState('')
 
   const fetchUsers = React.useCallback(async () => {
     const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) })
@@ -226,6 +232,9 @@ function UsersTab() {
             <button disabled={(page*pageSize)>=total} onClick={() => setPage(p => p+1)} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
           </div>
         </div>
+        <div className="p-3 flex justify-end">
+          <QuickFilter value={quick} onChange={setQuick} placeholder="Filter users..." className="w-full md:w-72" />
+        </div>
         <table className="w-full text-left">
           <thead>
             <tr className="bg-gray-100">
@@ -237,7 +246,7 @@ function UsersTab() {
             </tr>
           </thead>
           <tbody>
-            {users.map(u => (
+            {users.filter(u => `${u.email}`.toLowerCase().includes(quick.toLowerCase())).map(u => (
               <tr key={u.id} className="border-t">
                 <td className="p-2"><input type="checkbox" checked={!!selected[u.id]} onChange={e => setSelected(prev => ({ ...prev, [u.id]: e.target.checked }))} /></td>
                 <td className="p-2 font-medium">{u.email}</td>

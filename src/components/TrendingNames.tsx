@@ -1,11 +1,13 @@
 import React from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { QuickFilter } from '@/components/QuickFilter'
 
 export function TrendingNames() {
   const [names, setNames] = React.useState<string[]>([])
   const [loading, setLoading] = React.useState(false)
   const [sortAsc, setSortAsc] = React.useState(true)
+  const [filter, setFilter] = React.useState('')
 
   const fetchTrending = React.useCallback(async () => {
     setLoading(true)
@@ -53,6 +55,9 @@ export function TrendingNames() {
           <div className="text-gray-600">No trending names yet.</div>
         ) : (
           <div className="overflow-x-auto">
+            <div className="flex justify-end mb-2">
+              <QuickFilter value={filter} onChange={setFilter} placeholder="Filter names..." />
+            </div>
             <table className="w-full border-collapse border border-gray-300">
               <thead>
                 <tr className="bg-gray-50">
@@ -62,7 +67,7 @@ export function TrendingNames() {
                 </tr>
               </thead>
               <tbody>
-                {names.map((n, i) => (
+                {names.filter(n => n.toLowerCase().includes(filter.toLowerCase())).map((n, i) => (
                   <tr key={`${n}-${i}`} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2">{i + 1}</td>
                     <td className="border border-gray-300 px-4 py-2 font-medium">{n}</td>
