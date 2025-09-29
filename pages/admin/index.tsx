@@ -44,7 +44,7 @@ export default function AdminPage() {
 
 function NamesTab() {
   const [q, setQ] = React.useState('')
-  const [startsWith, setStartsWith] = React.useState(true)
+  const [mode, setMode] = React.useState<'starts' | 'ends' | 'contains'>('starts')
   const [page, setPage] = React.useState(1)
   const [pageSize] = React.useState(50)
   const [total, setTotal] = React.useState(0)
@@ -55,13 +55,13 @@ function NamesTab() {
   const [bulkText, setBulkText] = React.useState('')
 
   const fetchNames = React.useCallback(async () => {
-    const params = new URLSearchParams({ q, startsWith: String(startsWith), page: String(page), pageSize: String(pageSize) })
+    const params = new URLSearchParams({ q, mode: String(mode), page: String(page), pageSize: String(pageSize) })
     const res = await fetch(`/api/admin/names?${params}`)
     const data = await res.json()
     setNames(data.names || [])
     setTotal(data.total || 0)
     setSelected({})
-  }, [q, startsWith, page, pageSize])
+  }, [q, mode, page, pageSize])
 
   React.useEffect(() => { fetchNames() }, [fetchNames])
 
@@ -92,7 +92,11 @@ function NamesTab() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <input value={q} onChange={e => setQ(e.target.value)} className="border rounded px-3 py-2" placeholder="Search names" />
-        <label className="inline-flex items-center gap-2"><input type="checkbox" checked={startsWith} onChange={e => setStartsWith(e.target.checked)} /> Starts with</label>
+        <select value={mode} onChange={e => setMode(e.target.value as any)} className="border rounded px-3 py-2">
+          <option value="starts">Starts with</option>
+          <option value="ends">Ends with</option>
+          <option value="contains">Contains</option>
+        </select>
         <button onClick={() => setPage(1)} className="px-4 py-2 bg-blue-600 text-white rounded" >Search</button>
         <button onClick={deleteSelected} className="px-4 py-2 bg-red-600 text-white rounded" >Delete Selected</button>
       </div>

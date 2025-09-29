@@ -12,11 +12,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     if (req.method === 'GET') {
-      const { q = '', startsWith = 'false', page = '1', pageSize = '50' } = req.query
+      const { q = '', mode = 'contains', page = '1', pageSize = '50' } = req.query
       const pageNum = Math.max(parseInt(page as string, 10) || 1, 1)
       const sizeNum = Math.min(Math.max(parseInt(pageSize as string, 10) || 50, 1), 200)
       const skip = (pageNum - 1) * sizeNum
-      const data = await getNamesPage({ search: String(q), startsWith: String(startsWith) === 'true', skip, limit: sizeNum })
+      const data = await getNamesPage({ search: String(q), mode: (String(mode) as any), skip, limit: sizeNum })
       return res.status(200).json({ ...data, page: pageNum, pageSize: sizeNum })
     }
 

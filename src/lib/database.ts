@@ -349,13 +349,15 @@ export async function getTotalNamesCount(): Promise<number> {
 }
 
 // Admin: Names management
-export async function getNamesPage(params: { search?: string; startsWith?: boolean; skip?: number; limit?: number }): Promise<{ names: string[]; total: number; }>{
+export async function getNamesPage(params: { search?: string; mode?: 'starts' | 'ends' | 'contains'; skip?: number; limit?: number }): Promise<{ names: string[]; total: number; }>{
   try {
     const { db } = await connectToDatabase();
-    const { search = '', startsWith = false, skip = 0, limit = 50 } = params || {} as any;
+    const { search = '', mode = 'contains', skip = 0, limit = 50 } = params || {} as any;
     const filter: any = {};
     if (search && search.trim()) {
-      const pattern = startsWith ? `^${search.trim()}` : `${search.trim()}`;
+      let pattern = `${search.trim()}`;
+      if (mode === 'starts') pattern = `^${search.trim()}`;
+      if (mode === 'ends') pattern = `${search.trim()}$`;
       filter.name = { $regex: pattern, $options: 'i' };
     }
     const cursor = db.collection('names').find(filter).skip(skip).limit(limit);
@@ -431,8 +433,9 @@ export async function listGoogleUsers(params: { skip?: number; limit?: number; }
   try {
     const { db } = await connectToDatabase();
     const { skip = 0, limit = 50 } = params || {} as any;
-    const filter: any = { provider: 'google' };
-    const cursor = db.collection('userData').find(filter).skip(skip).limit(limit);
+    // Include all users who have logged in at least once (have an email)
+    const filter: any = { email: { $exists: true } };
+    const cursor = db.collection('userData').find(filter).sort({ lastLoginAt: -1 }).skip(skip).limit(limit);
     const [docs, total] = await Promise.all([
       cursor.toArray(),
       db.collection('userData').countDocuments(filter),
