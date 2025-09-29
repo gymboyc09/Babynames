@@ -492,3 +492,32 @@ export async function deleteUsers(ids: string[]): Promise<number>{
     return 0;
   }
 }
+
+// Trending names
+export async function getTrendingNames(): Promise<string[]>{
+  try {
+    const { db } = await connectToDatabase();
+    const doc = await db.collection('settings').findOne({ key: 'trending_names' });
+    const names: string[] = Array.isArray(doc?.names) ? doc.names : [];
+    return names;
+  } catch (error) {
+    console.error('Error getting trending names:', error);
+    return [];
+  }
+}
+
+export async function setTrendingNames(names: string[]): Promise<boolean>{
+  try {
+    const { db } = await connectToDatabase();
+    const normalized = Array.from(new Set((names || []).map(n => (n || '').toString().trim()).filter(Boolean)));
+    await db.collection('settings').updateOne(
+      { key: 'trending_names' },
+      { $set: { names: normalized, updatedAt: new Date() } },
+      { upsert: true }
+    );
+    return true;
+  } catch (error) {
+    console.error('Error setting trending names:', error);
+    return false;
+  }
+}

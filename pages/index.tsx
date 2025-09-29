@@ -8,6 +8,7 @@ import { Footer } from '@/components/Footer'
 import { NumerologyCalculator } from '@/components/NumerologyCalculator'
 import { NameSuggestionEngine } from '@/components/NameSuggestionEngine'
 import { FavoritesList } from '@/components/FavoritesList'
+import { TrendingNames } from '@/components/TrendingNames'
 import { RecentCalculations } from '@/components/RecentCalculations'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -159,9 +160,10 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Main Content */}
+        {/* Main Content */}
           {activeTab === 'calculator' && <NumerologyCalculator initialName={calculatorName} />}
           {activeTab === 'suggestions' && <NameSuggestionEngine />}
+        {activeTab === 'trending' && <TrendingNames />}
           {activeTab === 'favorites' && <FavoritesList onNavigateToCalculator={handleNavigateToCalculator} />}
           {activeTab === 'history' && <RecentCalculations onNavigateToCalculator={handleNavigateToCalculator} />}
           {activeTab === 'astrology' && (

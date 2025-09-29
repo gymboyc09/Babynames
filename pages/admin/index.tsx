@@ -34,7 +34,7 @@ export default function AdminPage() {
             <button onClick={() => setActiveTab('users')} className={`px-4 py-2 rounded ${activeTab==='users' ? 'bg-blue-600 text-white' : 'bg-white border'}`}>Users</button>
           </div>
 
-          {activeTab === 'names' ? <NamesTab /> : <UsersTab />}
+          {activeTab === 'names' ? <NamesTab /> : activeTab === 'users' ? <UsersTab /> : null}
         </main>
         <Footer />
       </div>
@@ -53,6 +53,17 @@ function NamesTab() {
   const [oldName, setOldName] = React.useState('')
   const [newName, setNewName] = React.useState('')
   const [bulkText, setBulkText] = React.useState('')
+  const [trendingText, setTrendingText] = React.useState('')
+  const [savingTrending, setSavingTrending] = React.useState(false)
+
+  const loadTrending = React.useCallback(async () => {
+    const res = await fetch('/api/admin/trending')
+    const data = await res.json()
+    const list: string[] = data.names || []
+    setTrendingText(list.join('\n'))
+  }, [])
+
+  React.useEffect(() => { loadTrending() }, [loadTrending])
 
   const fetchNames = React.useCallback(async () => {
     const params = new URLSearchParams({ q, mode: String(mode), page: String(page), pageSize: String(pageSize) })
@@ -88,6 +99,16 @@ function NamesTab() {
     fetchNames()
   }
 
+  const saveTrending = async () => {
+    setSavingTrending(true)
+    try {
+      const list = trendingText.split(/\r?\n|,|;|\t/).map(s => s.trim()).filter(Boolean)
+      await fetch('/api/admin/trending', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ names: list }) })
+    } finally {
+      setSavingTrending(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -116,6 +137,15 @@ function NamesTab() {
           <div className="mt-2">
             <button onClick={updateOne} className="px-4 py-2 bg-yellow-600 text-white rounded">Update</button>
           </div>
+        </div>
+      </div>
+
+      <div className="border rounded p-4">
+        <h3 className="font-semibold mb-2">Trending Names (public)</h3>
+        <p className="text-sm text-gray-600 mb-2">Enter one name per line (or comma/newline separated). These will appear on the Trending tab for all users.</p>
+        <textarea value={trendingText} onChange={e => setTrendingText(e.target.value)} className="w-full h-40 border rounded p-2" placeholder="e.g. Aahana\nIshaan\nVihaan" />
+        <div className="mt-2">
+          <button onClick={saveTrending} disabled={savingTrending} className="px-4 py-2 bg-blue-600 text-white rounded">{savingTrending ? 'Saving...' : 'Save Trending'}</button>
         </div>
       </div>
 

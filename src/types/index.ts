@@ -107,4 +107,4 @@ export interface UserData {
   updatedAt: Date;
 }
 
-export type NavigationTab = 'calculator' | 'suggestions' | 'favorites' | 'history' | 'astrology' | 'settings';
+export type NavigationTab = 'calculator' | 'suggestions' | 'trending' | 'favorites' | 'history' | 'astrology' | 'settings';

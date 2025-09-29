@@ -17,6 +17,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   const allTabs: { id: NavigationTab; label: string; requiresAuth?: boolean }[] = [
     { id: 'suggestions', label: 'Find Names' },
     { id: 'calculator', label: 'Calculator' },
+    { id: 'trending', label: 'Trending' },
     { id: 'favorites', label: 'Favorites', requiresAuth: true },
     { id: 'history', label: 'History', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', requiresAuth: true },
