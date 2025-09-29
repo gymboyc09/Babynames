@@ -198,7 +198,7 @@ function UsersTab() {
               <th className="p-2 w-12"></th>
               <th className="p-2">Email</th>
               <th className="p-2">Admin</th>
-              <th className="p-2">Blocked</hth>
+              <th className="p-2">Blocked</th>
               <th className="p-2">Last Login</th>
             </tr>
           </thead>
