@@ -4,7 +4,11 @@ import type { JWT } from "next-auth/jwt"
 import type { NextAuthOptions } from "next-auth"
 import { createUserData, getUserData, updateUserData } from "@/lib/database"
 
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase()).filter(Boolean)
+const DEFAULT_ADMINS = ["gymboyc@gmail.com"]
+const ADMIN_EMAILS = Array.from(new Set([
+  ...DEFAULT_ADMINS,
+  ...(process.env.ADMIN_EMAILS || "").split(",").map(e => e.trim().toLowerCase()).filter(Boolean),
+]))
 
 export const authOptions: NextAuthOptions = {
   providers: [
