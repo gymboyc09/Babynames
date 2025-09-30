@@ -204,10 +204,7 @@ function NamesTab() {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Gender Tools</h3>
           <p className="text-sm text-gray-600 mb-3">Populate missing genders using intelligent prediction on up to 5,000 names per run.</p>
           <div className="flex flex-wrap items-center gap-3 mb-4">
-            <button onClick={() => runBackfill(false)} disabled={backfillRunning} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
-              {backfillRunning ? 'Running...' : 'Backfill Missing (5000)'}
-            </button>
-            <button onClick={() => runBackfill(true)} disabled={backfillRunning} className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50">
+            <button onClick={() => runBackfill(true)} disabled={backfillRunning} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
               {backfillRunning ? 'Running...' : 'Recompute & Apply Overrides (5000)'}
             </button>
             {backfillInfo && (
