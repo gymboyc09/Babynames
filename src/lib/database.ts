@@ -285,8 +285,58 @@ export async function removeRecentCalculation(userId: string, nameId: string): P
   }
 }
 
+export interface DbNameItem { name: string; gender?: 'Boy' | 'Girl' | 'Unisex' | string }
+
+export function predictGenderFromName(name: string): 'Boy' | 'Girl' | 'Unisex' {
+  if (!name) return 'Unisex';
+  const n = name.toLowerCase();
+  const girlEndings = ['a', 'i', 'y', 'aa', 'ika', 'ika', 'ini', 'shi', 'shi', 'ya'];
+  const boyEndings = ['n', 'v', 'r', 't', 'sh', 'an', 'esh', 'it', 'raj', 'ay'];
+  if (girlEndings.some(s => n.endsWith(s))) return 'Girl';
+  if (boyEndings.some(s => n.endsWith(s))) return 'Boy';
+  return 'Unisex';
+}
+
+export async function setNameGender(name: string, gender: 'Boy' | 'Girl' | 'Unisex'): Promise<boolean> {
+  try {
+    const { db } = await connectToDatabase();
+    const res = await db.collection('names').updateOne(
+      { name },
+      { $set: { gender, updatedAt: new Date() } }
+    );
+    return res.matchedCount > 0;
+  } catch (error) {
+    console.error('Error setting name gender:', error);
+    return false;
+  }
+}
+
+export async function backfillNameGenders(batchSize: number = 1000): Promise<{ updated: number; remaining: number; }>{
+  try {
+    const { db } = await connectToDatabase();
+    const cursor = db.collection('names').find({ $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] }).limit(batchSize);
+    const docs = await cursor.toArray();
+    if (docs.length === 0) {
+      const remaining = await db.collection('names').countDocuments({ $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] });
+      return { updated: 0, remaining };
+    }
+    const ops = docs.map((d: any) => ({
+      updateOne: {
+        filter: { _id: d._id },
+        update: { $set: { gender: predictGenderFromName(d.name), updatedAt: new Date() } }
+      }
+    }));
+    const res = await db.collection('names').bulkWrite(ops);
+    const remaining = await db.collection('names').countDocuments({ $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] });
+    return { updated: res.modifiedCount ?? 0, remaining };
+  } catch (error) {
+    console.error('Error backfilling genders:', error);
+    return { updated: 0, remaining: 0 };
+  }
+}
+
 // Names collection functions
-export async function searchNames(searchTerm: string, limit: number = 10): Promise<string[]> {
+export async function searchNames(searchTerm: string, limit: number = 10): Promise<DbNameItem[]> {
   try {
     const { db } = await connectToDatabase();
     const names = await db.collection('names')
@@ -296,25 +346,25 @@ export async function searchNames(searchTerm: string, limit: number = 10): Promi
           $options: 'i' 
         } 
       })
+      .project({ name: 1, gender: 1, _id: 0 })
       .limit(limit)
       .toArray();
-    
-    return names.map(doc => doc.name);
+    return names as DbNameItem[];
   } catch (error) {
     console.error('Error searching names:', error);
     return [];
   }
 }
 
-export async function getAllNames(limit: number = 10): Promise<string[]> {
+export async function getAllNames(limit: number = 10): Promise<DbNameItem[]> {
   try {
     const { db } = await connectToDatabase();
     const names = await db.collection('names')
       .find({})
+      .project({ name: 1, gender: 1, _id: 0 })
       .limit(limit)
       .toArray();
-    
-    return names.map(doc => doc.name);
+    return names as DbNameItem[];
   } catch (error) {
     console.error('Error getting all names:', error);
     return [];

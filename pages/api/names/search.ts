@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { searchNames, getAllNames } from '@/lib/database';
+import { searchNames, getAllNames, type DbNameItem } from '@/lib/database';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -10,20 +10,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { search, limit = '10' } = req.query;
     const limitNum = parseInt(limit as string, 10);
     
-    // Validate limit
     if (limitNum < 1 || limitNum > 50) {
       return res.status(400).json({ error: 'Limit must be between 1 and 50' });
     }
 
-    let names: string[] = [];
+    let items: DbNameItem[] = [];
     
     if (search && typeof search === 'string' && search.trim()) {
-      names = await searchNames(search.trim(), limitNum);
+      items = await searchNames(search.trim(), limitNum);
     } else {
-      names = await getAllNames(limitNum);
+      items = await getAllNames(limitNum);
     }
 
-    res.status(200).json({ names });
+    res.status(200).json({ names: items });
   } catch (error) {
     console.error('Error in names search API:', error);
     res.status(500).json({ error: 'Internal server error' });
