@@ -43,12 +43,12 @@ export function AdminHeader() {
                   className="bg-white text-red-600 hover:bg-gray-100"
                 >
                   Sign Out
-+                </Button>
-+              </div>
-+            )}
-+          </div>
-+        </div>
-+      </div>
-+    </header>
-+  )
-+}
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  )
+}
