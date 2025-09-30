@@ -68,6 +68,8 @@ function NamesTab() {
   const [oldName, setOldName] = React.useState('')
   const [newName, setNewName] = React.useState('')
   const [bulkText, setBulkText] = React.useState('')
+  const [backfillRunning, setBackfillRunning] = React.useState(false)
+  const [backfillInfo, setBackfillInfo] = React.useState<{ updated: number; remaining: number } | null>(null)
 
   const fetchNames = React.useCallback(async () => {
     const params = new URLSearchParams({ q, mode: String(mode), page: String(page), pageSize: String(pageSize) })
@@ -101,6 +103,23 @@ function NamesTab() {
     if (toDelete.length === 0) return
     await fetch('/api/admin/names', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ names: toDelete }) })
     fetchNames()
+  }
+
+  const runBackfill = async () => {
+    setBackfillRunning(true)
+    try {
+      const res = await fetch('/api/admin/names-gender-backfill', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ batch: 5000 })
+      })
+      const data = await res.json()
+      setBackfillInfo({ updated: data.updated ?? 0, remaining: data.remaining ?? 0 })
+    } catch (e) {
+      setBackfillInfo({ updated: 0, remaining: 0 })
+    } finally {
+      setBackfillRunning(false)
+    }
   }
 
   return (
@@ -177,34 +196,17 @@ function NamesTab() {
           </div>
         </div>
 
-        {/* Update Name Section */}
+        {/* Gender Tools */}
         <div className="bg-white border rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Update Name</h3>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Old Name</label>
-              <input 
-                value={oldName} 
-                onChange={e => setOldName(e.target.value)} 
-                className="w-full border rounded px-3 py-2" 
-                placeholder="Enter old name" 
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">New Name</label>
-              <input 
-                value={newName} 
-                onChange={e => setNewName(e.target.value)} 
-                className="w-full border rounded px-3 py-2" 
-                placeholder="Enter new name" 
-              />
-            </div>
-            <button 
-              onClick={updateOne} 
-              className="w-full px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
-            >
-              Update Name
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Gender Tools</h3>
+          <p className="text-sm text-gray-600 mb-3">Populate missing genders using intelligent prediction on up to 5,000 names per run.</p>
+          <div className="flex items-center gap-3">
+            <button onClick={runBackfill} disabled={backfillRunning} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
+              {backfillRunning ? 'Running...' : 'Backfill Gender (5000)'}
             </button>
+            {backfillInfo && (
+              <span className="text-sm text-gray-700">Updated: {backfillInfo.updated}, Remaining: {backfillInfo.remaining}</span>
+            )}
           </div>
         </div>
       </div>
