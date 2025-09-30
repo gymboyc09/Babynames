@@ -378,7 +378,11 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">{result.name} name vibrations</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      <a href={`/calculator/${result.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`} className="text-blue-600 hover:text-blue-800 underline">
+                        {result.name} name vibrations
+                      </a>
+                    </h4>
                     <div className="space-y-2">
                       <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
                         <div className="flex justify-between items-center">

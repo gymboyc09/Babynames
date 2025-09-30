@@ -18,6 +18,7 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
   const allTabs: { id: NavigationTab; label: string; icon: string; requiresAuth?: boolean }[] = [
     { id: 'suggestions', label: 'Find Names', icon: '🔍' },
     { id: 'calculator', label: 'Calculator', icon: '🧮' },
+    { id: 'trending', label: 'Trending', icon: '📈' },
     { id: 'favorites', label: 'Favorites', icon: '❤️', requiresAuth: true },
     { id: 'history', label: 'History', icon: '📚', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', icon: '⭐', requiresAuth: true },
@@ -28,7 +29,11 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
   const tabs = allTabs.filter(tab => !tab.requiresAuth || session);
 
   const handleTabClick = (tab: NavigationTab) => {
-    onTabChange(tab);
+    if (tab === 'trending') {
+      window.location.href = '/trending';
+    } else {
+      onTabChange(tab);
+    }
     onToggle(); // Close sidebar after selection
   };
 
