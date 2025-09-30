@@ -6,8 +6,10 @@ import { useSession } from 'next-auth/react'
 import { LoginModal } from '@/components/LoginModal'
 import { Heart } from 'lucide-react'
 
+type TrendingItem = { name: string; gender?: string }
+
 export function TrendingNames() {
-  const [names, setNames] = React.useState<string[]>([])
+  const [items, setItems] = React.useState<TrendingItem[]>([])
   const [loading, setLoading] = React.useState(false)
   const [sortAsc, setSortAsc] = React.useState(true)
   const [filter, setFilter] = React.useState('')
@@ -20,7 +22,10 @@ export function TrendingNames() {
     try {
       const res = await fetch('/api/trending')
       const data = await res.json()
-      setNames(data.names || [])
+      const list: TrendingItem[] = Array.isArray(data.names)
+        ? data.names.map((it: any) => typeof it === 'string' ? { name: it, gender: 'Unisex' } : { name: it?.name, gender: it?.gender || 'Unisex' })
+        : []
+      setItems(list)
     } finally {
       setLoading(false)
     }
@@ -30,8 +35,8 @@ export function TrendingNames() {
 
   const toggleSort = () => {
     setSortAsc(prev => !prev)
-    setNames(prev => {
-      const sorted = [...prev].sort((a,b) => a.localeCompare(b))
+    setItems(prev => {
+      const sorted = [...prev].sort((a,b) => a.name.localeCompare(b.name))
       return sortAsc ? sorted.reverse() : sorted
     })
   }
@@ -81,11 +86,13 @@ export function TrendingNames() {
     }
   }
 
+  const filtered = items.filter(it => it.name.toLowerCase().includes(filter.toLowerCase()))
+
   return (
     <Card>
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle>Trending Names ({names.length})</CardTitle>
+          <CardTitle>Trending Names ({items.length})</CardTitle>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={toggleSort}>
               {sortAsc ? '↑' : '↓'}
@@ -97,7 +104,7 @@ export function TrendingNames() {
       <CardContent>
         {loading ? (
           <div>Loading...</div>
-        ) : names.length === 0 ? (
+        ) : items.length === 0 ? (
           <div className="text-gray-600">No trending names yet.</div>
         ) : (
           <div className="overflow-x-auto">
@@ -109,24 +116,26 @@ export function TrendingNames() {
                 <tr className="bg-gray-50">
                   <th className="border border-gray-300 px-4 py-2 text-left font-semibold">#</th>
                   <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Name</th>
+                  <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Gender</th>
                   <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {names.filter(n => n.toLowerCase().includes(filter.toLowerCase())).map((n, i) => (
-                  <tr key={`${n}-${i}`} className="hover:bg-gray-50">
+                {filtered.map((it, i) => (
+                  <tr key={`${it.name}-${i}`} className="hover:bg-gray-50">
                     <td className="border border-gray-300 px-4 py-2">{i + 1}</td>
-                    <td className="border border-gray-300 px-4 py-2 font-medium">{n}</td>
+                    <td className="border border-gray-300 px-4 py-2 font-medium">{it.name}</td>
+                    <td className="border border-gray-300 px-4 py-2">{it.gender || 'Unisex'}</td>
                     <td className="border border-gray-300 px-4 py-2">
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={() => analyze(n)}>Analyze</Button>
+                        <Button variant="outline" size="sm" onClick={() => analyze(it.name)}>Analyze</Button>
                         <button
                           aria-label="Toggle favorite"
-                          className={`p-2 rounded hover:bg-gray-100 ${favoriteSet[n] ? 'text-red-600' : 'text-gray-500'}`}
-                          onClick={() => toggleFavorite(n)}
-                          title={favoriteSet[n] ? 'Remove favorite' : 'Save to favorites'}
+                          className={`p-2 rounded hover:bg-gray-100 ${favoriteSet[it.name] ? 'text-red-600' : 'text-gray-500'}`}
+                          onClick={() => toggleFavorite(it.name)}
+                          title={favoriteSet[it.name] ? 'Remove favorite' : 'Save to favorites'}
                         >
-                          <Heart className={`h-4 w-4 ${favoriteSet[n] ? 'fill-current' : ''}`} />
+                          <Heart className={`h-4 w-4 ${favoriteSet[it.name] ? 'fill-current' : ''}`} />
                         </button>
                       </div>
                     </td>

@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]'
-import { getTrendingNames, setTrendingNames } from '@/lib/database'
+import { getTrendingNames, setTrendingNames, type TrendingItem } from '@/lib/database'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const session = await getServerSession(req, res, authOptions)
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(200).json({ names })
     }
     if (req.method === 'PUT') {
-      const { names } = req.body as { names: string[] }
+      const { names } = req.body as { names: TrendingItem[] }
       const ok = await setTrendingNames(names || [])
       return res.status(ok ? 200 : 500).json(ok ? { saved: true } : { error: 'Failed to save' })
     }

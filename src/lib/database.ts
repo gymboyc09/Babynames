@@ -494,22 +494,43 @@ export async function deleteUsers(ids: string[]): Promise<number>{
 }
 
 // Trending names
-export async function getTrendingNames(): Promise<string[]>{
+export type TrendingItem = { name: string; gender: 'Boy' | 'Girl' | 'Unisex' | string };
+
+export async function getTrendingNames(): Promise<TrendingItem[]> {
   try {
     const { db } = await connectToDatabase();
     const doc = await db.collection('settings').findOne({ key: 'trending_names' });
-    const names: string[] = Array.isArray(doc?.names) ? doc.names : [];
-    return names;
+    const raw = doc?.names;
+
+    if (Array.isArray(raw)) {
+      // Backward compatibility: strings => objects
+      if (raw.length > 0 && typeof raw[0] === 'string') {
+        return (raw as string[]).map((n: string) => ({ name: (n || '').toString().trim(), gender: 'Unisex' }));
+      }
+      // Already objects
+      return (raw as any[])
+        .map((it) => ({ name: (it?.name || '').toString().trim(), gender: (it?.gender || 'Unisex').toString() }))
+        .filter((it) => it.name);
+    }
+    return [];
   } catch (error) {
     console.error('Error getting trending names:', error);
     return [];
   }
 }
 
-export async function setTrendingNames(names: string[]): Promise<boolean>{
+export async function setTrendingNames(items: TrendingItem[]): Promise<boolean> {
   try {
     const { db } = await connectToDatabase();
-    const normalized = Array.from(new Set((names || []).map(n => (n || '').toString().trim()).filter(Boolean)));
+    const normalized = Array.from(
+      new Map(
+        (items || [])
+          .map((it) => ({ name: (it?.name || '').toString().trim(), gender: (it?.gender || 'Unisex').toString() }))
+          .filter((it) => !!it.name)
+          .map((it) => [it.name.toLowerCase(), it])
+      ).values()
+    );
+
     await db.collection('settings').updateOne(
       { key: 'trending_names' },
       { $set: { names: normalized, updatedAt: new Date() } },

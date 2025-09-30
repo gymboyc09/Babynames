@@ -106,8 +106,26 @@ function NamesTab() {
   const saveTrending = async () => {
     setSavingTrending(true)
     try {
-      const list = trendingText.split(/\r?\n|,|;|\t/).map(s => s.trim()).filter(Boolean)
-      await fetch('/api/admin/trending', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ names: list }) })
+      const rows = trendingText
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean)
+      // Support optional header "Name,Gender"
+      const parsed = rows
+        .filter((line, idx) => !(idx === 0 && /name\s*,\s*gender/i.test(line)))
+        .map(line => {
+          const parts = line.split(',').map(s => s.trim())
+          const name = (parts[0] || '').trim()
+          const gender = (parts[1] || 'Unisex').trim()
+          return name ? { name, gender } : null
+        })
+        .filter(Boolean) as { name: string; gender: string }[]
+
+      await fetch('/api/admin/trending', { 
+        method: 'PUT', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify({ names: parsed }) 
+      })
     } finally {
       setSavingTrending(false)
     }
@@ -223,14 +241,14 @@ function NamesTab() {
       <div className="bg-white border rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Trending Names (Public)</h3>
         <p className="text-sm text-gray-600 mb-4">
-          These names will appear on the public Trending page for all users to see.
+          Paste CSV like: <code>Name,Gender</code> on the first line (optional) followed by rows like <code>Aarav,Boy</code>, <code>Aadhya,Girl</code>.
         </p>
         <div className="space-y-4">
           <textarea 
             value={trendingText} 
             onChange={e => setTrendingText(e.target.value)} 
             className="w-full h-40 border rounded p-3" 
-            placeholder="Enter trending names, one per line..."
+            placeholder={"Name,Gender\nAarav,Boy\nAadhya,Girl"}
           />
           <button 
             onClick={saveTrending} 

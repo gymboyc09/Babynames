@@ -7,8 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ error: 'Method not allowed' })
   }
   try {
-    const names = await getTrendingNames()
-    return res.status(200).json({ names })
+    const items = await getTrendingNames()
+    return res.status(200).json({ names: items })
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' })
   }

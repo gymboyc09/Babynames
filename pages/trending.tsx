@@ -10,6 +10,11 @@ export default function TrendingPage() {
     window.location.href = '/'
   }
 
+  const oneDayAgo = React.useMemo(() => {
+    const d = new Date(Date.now() - 24 * 60 * 60 * 1000)
+    return d.toLocaleString()
+  }, [])
+
   return (
     <>
       <Head>
@@ -24,9 +29,12 @@ export default function TrendingPage() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Trending Baby Names</h1>
-            <p className="text-lg text-gray-600">Admin-curated list of names currently trending. Click Analyze to view detailed insights.</p>
+            <p className="text-lg text-gray-600">Top Trending Baby Names: Instant Analysis of Gender, Numerology, and Astrology. Find Your Child's Perfect Name!</p>
           </div>
           <TrendingNames />
+          <div className="text-center text-sm text-gray-500 mt-6">
+            Last updated: {oneDayAgo}
+          </div>
         </main>
         <Footer />
       </div>
