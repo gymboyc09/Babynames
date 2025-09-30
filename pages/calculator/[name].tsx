@@ -224,7 +224,7 @@ export default function CalculatorPage() {
               Advanced Numerology Calculator
             </h1>
             <p className="text-lg text-gray-600">
-              Analyzing the name: <span className="font-semibold text-blue-600">{name}</span>
+              Analyzing the name: <a href={`/calculator/${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`} className="font-semibold text-blue-600 hover:text-blue-800 underline">{name}</a>
             </p>
           </div>
           

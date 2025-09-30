@@ -172,7 +172,7 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>Analysis for "{result.name}"</CardTitle>
+                <CardTitle>Analysis for "<a href={`/calculator/${result.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`} className="text-blue-600 hover:text-blue-800 underline">{result.name}</a>"</CardTitle>
                 <Button
                   variant="outline"
                   size="sm"
@@ -187,7 +187,11 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                 {/* Numerology Section */}
                 <div className="space-y-6">
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Pythagorean Numerology</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      <a href={`/calculator/${result.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`} className="text-blue-600 hover:text-blue-800 underline">
+                        Pythagorean Numerology for {result.name}
+                      </a>
+                    </h4>
                     <div className="space-y-2">
                       <div>
                         <span className="font-medium">Letter Breakdown:</span>
@@ -219,7 +223,11 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Chaldean Numerology</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      <a href={`/calculator/${result.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`} className="text-blue-600 hover:text-blue-800 underline">
+                        Chaldean Numerology for {result.name}
+                      </a>
+                    </h4>
                     <div className="space-y-2">
                       <div>
                         <span className="font-medium">Letter Breakdown:</span>
@@ -355,7 +363,11 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                 {/* Phonology Section */}
                 <div className="space-y-6">
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Phonology Analysis</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      <a href={`/calculator/${result.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`} className="text-blue-600 hover:text-blue-800 underline">
+                        Phonology Analysis for {result.name}
+                      </a>
+                    </h4>
                     <div className="space-y-2">
                       <p><span className="font-medium">Syllables:</span> {result.phonology.syllables}</p>
                       <p><span className="font-medium">Vowels:</span> {result.phonology.vowelCount}</p>
@@ -366,7 +378,7 @@ export function NumerologyCalculator({ initialName = '' }: NumerologyCalculatorP
                   </div>
 
                   <div>
-                    <h4 className="font-semibold text-gray-900 mb-3">Vibrations</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">{result.name} name vibrations</h4>
                     <div className="space-y-2">
                       <div className="p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
                         <div className="flex justify-between items-center">

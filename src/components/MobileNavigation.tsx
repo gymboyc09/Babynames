@@ -13,6 +13,7 @@ export function MobileNavigation({ activeTab, onTabChange }: MobileNavigationPro
   const allTabs: { id: NavigationTab; label: string; icon: string; requiresAuth?: boolean }[] = [
     { id: 'calculator', label: 'Calculator', icon: '🧮' },
     { id: 'suggestions', label: 'Find', icon: '🔍' },
+    { id: 'trending', label: 'Trending', icon: '📈' },
     { id: 'favorites', label: 'Favorites', icon: '❤️', requiresAuth: true },
     { id: 'history', label: 'History', icon: '📚', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', icon: '⭐', requiresAuth: true },
@@ -28,7 +29,13 @@ export function MobileNavigation({ activeTab, onTabChange }: MobileNavigationPro
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => onTabChange(tab.id)}
+            onClick={() => {
+              if (tab.id === 'trending') {
+                window.location.href = '/trending';
+              } else {
+                onTabChange(tab.id);
+              }
+            }}
             className={`flex flex-col items-center py-2 px-1 text-xs transition-colors ${
               activeTab === tab.id
                 ? 'text-blue-600 bg-blue-50'
