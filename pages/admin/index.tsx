@@ -108,13 +108,13 @@ function NamesTab() {
     fetchNames()
   }
 
-  const runBackfill = async () => {
+  const runBackfill = async (force: boolean = false) => {
     setBackfillRunning(true)
     try {
       const res = await fetch('/api/admin/names-gender-backfill', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ batch: 5000 })
+        body: JSON.stringify({ batch: 5000, force })
       })
       const data = await res.json()
       setBackfillInfo({ updated: data.updated ?? 0, remaining: data.remaining ?? 0 })
@@ -203,14 +203,18 @@ function NamesTab() {
         <div className="bg-white border rounded-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Gender Tools</h3>
           <p className="text-sm text-gray-600 mb-3">Populate missing genders using intelligent prediction on up to 5,000 names per run.</p>
-          <div className="flex items-center gap-3 mb-4">
-            <button onClick={runBackfill} disabled={backfillRunning} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
-              {backfillRunning ? 'Running...' : 'Backfill Gender (5000)'}
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <button onClick={() => runBackfill(false)} disabled={backfillRunning} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
+              {backfillRunning ? 'Running...' : 'Backfill Missing (5000)'}
+            </button>
+            <button onClick={() => runBackfill(true)} disabled={backfillRunning} className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-50">
+              {backfillRunning ? 'Running...' : 'Recompute & Apply Overrides (5000)'}
             </button>
             {backfillInfo && (
               <span className="text-sm text-gray-700">Updated: {backfillInfo.updated}, Remaining: {backfillInfo.remaining}</span>
             )}
           </div>
+          <p className="text-xs text-gray-500 mb-2">Tip: Use “Recompute & Apply Overrides” to fix names already labeled incorrectly (e.g., Srinivasa, Srinivasan → Boy).</p>
           <div className="border-t pt-4 mt-2">
             <h4 className="font-semibold mb-2">Manual Override</h4>
             <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
