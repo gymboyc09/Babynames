@@ -18,7 +18,7 @@ export async function getServerSideProps(context: any) {
 }
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = React.useState<'names' | 'users'>('names')
+  const [activeSection, setActiveSection] = React.useState<'names' | 'trending' | 'users'>('names')
 
   return (
     <>
@@ -28,15 +28,26 @@ export default function AdminPage() {
       <div className="min-h-screen bg-gray-50">
         <AdminHeader />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">Admin Panel</h1>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            {/* Sidebar */}
+            <aside className="bg-white rounded-lg shadow-sm border p-4 h-max">
+              <h2 className="text-lg font-semibold mb-4">Admin Menu</h2>
+              <nav className="space-y-2">
+                <button onClick={() => setActiveSection('names')} className={`w-full text-left px-4 py-2 rounded ${activeSection==='names' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>Names</button>
+                <button onClick={() => setActiveSection('trending')} className={`w-full text-left px-4 py-2 rounded ${activeSection==='trending' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>Trending</button>
+                <button onClick={() => setActiveSection('users')} className={`w-full text-left px-4 py-2 rounded ${activeSection==='users' ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'}`}>Users</button>
+              </nav>
+            </aside>
 
-            <div className="flex gap-4 mb-6">
-              <button onClick={() => setActiveTab('names')} className={`px-4 py-2 rounded ${activeTab==='names' ? 'bg-blue-600 text-white' : 'bg-white border'}`}>Names</button>
-              <button onClick={() => setActiveTab('users')} className={`px-4 py-2 rounded ${activeTab==='users' ? 'bg-blue-600 text-white' : 'bg-white border'}`}>Users</button>
-            </div>
-
-            {activeTab === 'names' ? <NamesTab /> : activeTab === 'users' ? <UsersTab /> : null}
+            {/* Content */}
+            <section className="lg:col-span-3">
+              <div className="bg-white rounded-lg shadow-sm border p-6">
+                <h1 className="text-2xl font-bold text-gray-900 mb-6">Admin Panel</h1>
+                {activeSection === 'names' && <NamesTab />}
+                {activeSection === 'trending' && <TrendingAdminTab />}
+                {activeSection === 'users' && <UsersTab />}
+              </div>
+            </section>
           </div>
         </main>
         <Footer />
@@ -57,17 +68,6 @@ function NamesTab() {
   const [oldName, setOldName] = React.useState('')
   const [newName, setNewName] = React.useState('')
   const [bulkText, setBulkText] = React.useState('')
-  const [trendingText, setTrendingText] = React.useState('')
-  const [savingTrending, setSavingTrending] = React.useState(false)
-
-  const loadTrending = React.useCallback(async () => {
-    const res = await fetch('/api/admin/trending')
-    const data = await res.json()
-    const list: string[] = data.names || []
-    setTrendingText(list.join('\n'))
-  }, [])
-
-  React.useEffect(() => { loadTrending() }, [loadTrending])
 
   const fetchNames = React.useCallback(async () => {
     const params = new URLSearchParams({ q, mode: String(mode), page: String(page), pageSize: String(pageSize) })
@@ -101,34 +101,6 @@ function NamesTab() {
     if (toDelete.length === 0) return
     await fetch('/api/admin/names', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ names: toDelete }) })
     fetchNames()
-  }
-
-  const saveTrending = async () => {
-    setSavingTrending(true)
-    try {
-      const rows = trendingText
-        .split(/\r?\n/)
-        .map(line => line.trim())
-        .filter(Boolean)
-      // Support optional header "Name,Gender"
-      const parsed = rows
-        .filter((line, idx) => !(idx === 0 && /name\s*,\s*gender/i.test(line)))
-        .map(line => {
-          const parts = line.split(',').map(s => s.trim())
-          const name = (parts[0] || '').trim()
-          const gender = (parts[1] || 'Unisex').trim()
-          return name ? { name, gender } : null
-        })
-        .filter(Boolean) as { name: string; gender: string }[]
-
-      await fetch('/api/admin/trending', { 
-        method: 'PUT', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ names: parsed }) 
-      })
-    } finally {
-      setSavingTrending(false)
-    }
   }
 
   return (
@@ -237,29 +209,6 @@ function NamesTab() {
         </div>
       </div>
 
-      {/* Trending Names Section */}
-      <div className="bg-white border rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Trending Names (Public)</h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Paste CSV like: <code>Name,Gender</code> on the first line (optional) followed by rows like <code>Aarav,Boy</code>, <code>Aadhya,Girl</code>.
-        </p>
-        <div className="space-y-4">
-          <textarea 
-            value={trendingText} 
-            onChange={e => setTrendingText(e.target.value)} 
-            className="w-full h-40 border rounded p-3" 
-            placeholder={"Name,Gender\nAarav,Boy\nAadhya,Girl"}
-          />
-          <button 
-            onClick={saveTrending} 
-            disabled={savingTrending} 
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {savingTrending ? 'Saving...' : 'Save Trending Names'}
-          </button>
-        </div>
-      </div>
-
       {/* Names Table */}
       <div className="bg-white border rounded-lg overflow-hidden">
         <div className="p-4 border-b bg-gray-50">
@@ -297,23 +246,8 @@ function NamesTab() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
-                  <input 
-                    type="checkbox" 
-                    onChange={(e) => {
-                      const checked = e.target.checked
-                      const filtered = names.filter(n => n.toLowerCase().includes(quick.toLowerCase()))
-                      setSelected(prev => {
-                        const newSelected = { ...prev }
-                        filtered.forEach(n => newSelected[n] = checked)
-                        return newSelected
-                      })
-                    }}
-                  />
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12"></th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -331,6 +265,69 @@ function NamesTab() {
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function TrendingAdminTab() {
+  const [trendingText, setTrendingText] = React.useState('')
+  const [savingTrending, setSavingTrending] = React.useState(false)
+
+  const loadTrending = React.useCallback(async () => {
+    const res = await fetch('/api/admin/trending')
+    const data = await res.json()
+    const list = (data.names || []).map((it: any) => typeof it === 'string' ? it : `${it.name},${it.gender || 'Unisex'}`)
+    setTrendingText(list.join('\n'))
+  }, [])
+
+  React.useEffect(() => { loadTrending() }, [loadTrending])
+
+  const saveTrending = async () => {
+    setSavingTrending(true)
+    try {
+      const rows = trendingText
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean)
+      const parsed = rows
+        .filter((line, idx) => !(idx === 0 && /name\s*,\s*gender/i.test(line)))
+        .map(line => {
+          const parts = line.split(',').map(s => s.trim())
+          const name = (parts[0] || '').trim()
+          const gender = (parts[1] || 'Unisex').trim()
+          return name ? { name, gender } : null
+        })
+        .filter(Boolean)
+
+      await fetch('/api/admin/trending', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ names: parsed }) })
+    } finally {
+      setSavingTrending(false)
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white border rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Trending Names (Public)</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Paste CSV like: <code>Name,Gender</code> on the first line (optional) followed by rows like <code>Aarav,Boy</code>, <code>Aadhya,Girl</code>.
+        </p>
+        <div className="space-y-4">
+          <textarea 
+            value={trendingText} 
+            onChange={e => setTrendingText(e.target.value)} 
+            className="w-full h-64 border rounded p-3" 
+            placeholder={"Name,Gender\nAarav,Boy\nAadhya,Girl"}
+          />
+          <button 
+            onClick={saveTrending} 
+            disabled={savingTrending} 
+            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {savingTrending ? 'Saving...' : 'Save Trending Names'}
+          </button>
         </div>
       </div>
     </div>
@@ -356,10 +353,10 @@ function UsersTab() {
 
   React.useEffect(() => { fetchUsers() }, [fetchUsers])
 
-  const blockOrUnblock = async (block: boolean) => {
+  const blockOrUnblock = async (blocked: boolean) => {
     const ids = Object.keys(selected).filter(k => selected[k])
     if (ids.length === 0) return
-    await fetch('/api/admin/users', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids, block }) })
+    await fetch('/api/admin/users', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids, blocked }) })
     fetchUsers()
   }
 
@@ -434,20 +431,7 @@ function UsersTab() {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
-                  <input 
-                    type="checkbox" 
-                    onChange={(e) => {
-                      const checked = e.target.checked
-                      const filtered = users.filter(u => `${u.email}`.toLowerCase().includes(quick.toLowerCase()))
-                      setSelected(prev => {
-                        const newSelected = { ...prev }
-                        filtered.forEach(u => newSelected[u.id] = checked)
-                        return newSelected
-                      })
-                    }}
-                  />
-                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12"></th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Email
                 </th>
