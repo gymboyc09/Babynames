@@ -289,11 +289,32 @@ export interface DbNameItem { name: string; gender?: 'Boy' | 'Girl' | 'Unisex' |
 
 export function predictGenderFromName(name: string): 'Boy' | 'Girl' | 'Unisex' {
   if (!name) return 'Unisex';
-  const n = name.toLowerCase();
-  const girlEndings = ['a', 'i', 'y', 'aa', 'ika', 'ika', 'ini', 'shi', 'shi', 'ya'];
-  const boyEndings = ['n', 'v', 'r', 't', 'sh', 'an', 'esh', 'it', 'raj', 'ay'];
-  if (girlEndings.some(s => n.endsWith(s))) return 'Girl';
-  if (boyEndings.some(s => n.endsWith(s))) return 'Boy';
+  const n = name.toLowerCase().trim();
+
+  // Common female endings/patterns
+  const femaleSuffixes = [
+    'a','aa','i','ii','ee','y','iya','ya','iya','ika','ita','isha','eesha','eisha','isha','ika','ika','ita','ita','ika','ini','ani','sri','shree','pri','preet','reet','ritha','ritha','latha','lata','kshi','akshi','aksha','akshita','shika','nika','nika','nita','nitha','ita','eta','ota','ota','rita','ita','vya','aya','ya']
+  
+  // Common male endings/patterns
+  const maleSuffixes = [
+    'n','an','tan','han','ran','van','yan','vin','esh','eash','eesh','it','ith','rit','raj','rajh','tej','ansh','aansh','yansh','yanshu','vansh','tirth','arth','arthi','veer','vir','raj','rajit','ket','ketu','al','aal','ush','ut','hith','deep','dev','ishan','kumar','karthik','kartik','nath','jeet','meet','preet','pran','prane','pransh','laksh','lakshit','lakshan']
+
+  // Strong gender-specific prefixes
+  const femalePrefixes = ['sri', 'shri', 'kumari', 'kanya', 'lady'];
+  const malePrefixes = ['mr', 'shri', 'sri', 'kunal', 'raj'];
+
+  if (femalePrefixes.some(p => n.startsWith(p))) return 'Girl';
+  if (malePrefixes.some(p => n.startsWith(p))) return 'Boy';
+
+  if (femaleSuffixes.some(s => n.endsWith(s))) return 'Girl';
+  if (maleSuffixes.some(s => n.endsWith(s))) return 'Boy';
+
+  // If contains certain tokens
+  const femaleTokens = ['kumari','rani','devi','laxmi','lakshmi','priya','beti'];
+  const maleTokens = ['kumar','raj','veer','singh','dev','nath'];
+  if (femaleTokens.some(t => n.includes(t))) return 'Girl';
+  if (maleTokens.some(t => n.includes(t))) return 'Boy';
+
   return 'Unisex';
 }
 
