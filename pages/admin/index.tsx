@@ -2,7 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../api/auth/[...nextauth]'
-import { Header } from '@/components/Header'
+import { AdminHeader } from '@/components/AdminHeader'
 import { Footer } from '@/components/Footer'
 import { QuickFilter } from '@/components/QuickFilter'
 
@@ -26,16 +26,18 @@ export default function AdminPage() {
         <title>Admin Panel - Baby Names</title>
       </Head>
       <div className="min-h-screen bg-gray-50">
-        <Header activeTab="suggestions" onTabChange={() => {}} />
+        <AdminHeader />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-6">Admin Panel</h1>
+          <div className="bg-white rounded-lg shadow-sm border p-6">
+            <h1 className="text-3xl font-bold text-gray-900 mb-6">Admin Panel</h1>
 
-          <div className="flex gap-4 mb-6">
-            <button onClick={() => setActiveTab('names')} className={`px-4 py-2 rounded ${activeTab==='names' ? 'bg-blue-600 text-white' : 'bg-white border'}`}>Names</button>
-            <button onClick={() => setActiveTab('users')} className={`px-4 py-2 rounded ${activeTab==='users' ? 'bg-blue-600 text-white' : 'bg-white border'}`}>Users</button>
+            <div className="flex gap-4 mb-6">
+              <button onClick={() => setActiveTab('names')} className={`px-4 py-2 rounded ${activeTab==='names' ? 'bg-blue-600 text-white' : 'bg-white border'}`}>Names</button>
+              <button onClick={() => setActiveTab('users')} className={`px-4 py-2 rounded ${activeTab==='users' ? 'bg-blue-600 text-white' : 'bg-white border'}`}>Users</button>
+            </div>
+
+            {activeTab === 'names' ? <NamesTab /> : activeTab === 'users' ? <UsersTab /> : null}
           </div>
-
-          {activeTab === 'names' ? <NamesTab /> : activeTab === 'users' ? <UsersTab /> : null}
         </main>
         <Footer />
       </div>
@@ -113,71 +115,205 @@ function NamesTab() {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <input value={q} onChange={e => setQ(e.target.value)} className="border rounded px-3 py-2" placeholder="Search names" />
-        <select value={mode} onChange={e => setMode(e.target.value as any)} className="border rounded px-3 py-2">
-          <option value="starts">Starts with</option>
-          <option value="ends">Ends with</option>
-          <option value="contains">Contains</option>
-        </select>
-        <button onClick={() => setPage(1)} className="px-4 py-2 bg-blue-600 text-white rounded" >Search</button>
-        <button onClick={deleteSelected} className="px-4 py-2 bg-red-600 text-white rounded" >Delete Selected</button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="border rounded p-4">
-          <h3 className="font-semibold mb-2">Add Names (bulk)</h3>
-          <textarea value={bulkText} onChange={e => setBulkText(e.target.value)} className="w-full h-32 border rounded p-2" placeholder="Enter names separated by comma, newline, or tab" />
-          <div className="mt-2">
-            <button onClick={addBulk} className="px-4 py-2 bg-green-600 text-white rounded">Add</button>
+      {/* Search and Actions Bar */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Search Names</label>
+            <input 
+              value={q} 
+              onChange={e => setQ(e.target.value)} 
+              className="w-full border rounded px-3 py-2" 
+              placeholder="Enter search term..." 
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Filter Type</label>
+            <select 
+              value={mode} 
+              onChange={e => setMode(e.target.value as any)} 
+              className="w-full border rounded px-3 py-2"
+            >
+              <option value="starts">Starts with</option>
+              <option value="ends">Ends with</option>
+              <option value="contains">Contains</option>
+            </select>
+          </div>
+          <div>
+            <button 
+              onClick={() => setPage(1)} 
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            >
+              Search
+            </button>
+          </div>
+          <div>
+            <button 
+              onClick={deleteSelected} 
+              className="w-full px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Delete Selected
+            </button>
+          </div>
+          <div>
+            <div className="text-sm text-gray-600">Total: {total}</div>
           </div>
         </div>
-        <div className="border rounded p-4">
-          <h3 className="font-semibold mb-2">Update Name</h3>
-          <input value={oldName} onChange={e => setOldName(e.target.value)} className="border rounded px-3 py-2 mr-2" placeholder="Old name" />
-          <input value={newName} onChange={e => setNewName(e.target.value)} className="border rounded px-3 py-2" placeholder="New name" />
-          <div className="mt-2">
-            <button onClick={updateOne} className="px-4 py-2 bg-yellow-600 text-white rounded">Update</button>
+      </div>
+
+      {/* Management Tools */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Add Names Section */}
+        <div className="bg-white border rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Add Names (Bulk)</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enter names (one per line, comma, or tab separated)
+              </label>
+              <textarea 
+                value={bulkText} 
+                onChange={e => setBulkText(e.target.value)} 
+                className="w-full h-32 border rounded p-3" 
+                placeholder="Enter names separated by comma, newline, or tab"
+              />
+            </div>
+            <button 
+              onClick={addBulk} 
+              className="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            >
+              Add Names
+            </button>
+          </div>
+        </div>
+
+        {/* Update Name Section */}
+        <div className="bg-white border rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Update Name</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Old Name</label>
+              <input 
+                value={oldName} 
+                onChange={e => setOldName(e.target.value)} 
+                className="w-full border rounded px-3 py-2" 
+                placeholder="Enter old name" 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">New Name</label>
+              <input 
+                value={newName} 
+                onChange={e => setNewName(e.target.value)} 
+                className="w-full border rounded px-3 py-2" 
+                placeholder="Enter new name" 
+              />
+            </div>
+            <button 
+              onClick={updateOne} 
+              className="w-full px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
+            >
+              Update Name
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="border rounded p-4">
-        <h3 className="font-semibold mb-2">Trending Names (public)</h3>
-        <p className="text-sm text-gray-600 mb-2">Enter one name per line (or comma/newline separated). These will appear on the Trending tab for all users.</p>
-        <textarea value={trendingText} onChange={e => setTrendingText(e.target.value)} className="w-full h-40 border rounded p-2" placeholder="e.g. Aahana\nIshaan\nVihaan" />
-        <div className="mt-2">
-          <button onClick={saveTrending} disabled={savingTrending} className="px-4 py-2 bg-blue-600 text-white rounded">{savingTrending ? 'Saving...' : 'Save Trending'}</button>
+      {/* Trending Names Section */}
+      <div className="bg-white border rounded-lg p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Trending Names (Public)</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          These names will appear on the public Trending page for all users to see.
+        </p>
+        <div className="space-y-4">
+          <textarea 
+            value={trendingText} 
+            onChange={e => setTrendingText(e.target.value)} 
+            className="w-full h-40 border rounded p-3" 
+            placeholder="Enter trending names, one per line..."
+          />
+          <button 
+            onClick={saveTrending} 
+            disabled={savingTrending} 
+            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+          >
+            {savingTrending ? 'Saving...' : 'Save Trending Names'}
+          </button>
         </div>
       </div>
 
-      <div className="border rounded">
-        <div className="flex items-center justify-between p-3 border-b">
-          <div className="text-sm text-gray-600">Total: {total}</div>
-          <div className="flex gap-2">
-            <button disabled={page<=1} onClick={() => setPage(p => Math.max(1, p-1))} className="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
-            <button disabled={(page*pageSize)>=total} onClick={() => setPage(p => p+1)} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
+      {/* Names Table */}
+      <div className="bg-white border rounded-lg overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-900">Names Database</h3>
+            <div className="flex gap-2">
+              <button 
+                disabled={page<=1} 
+                onClick={() => setPage(p => Math.max(1, p-1))} 
+                className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
+              >
+                Previous
+              </button>
+              <button 
+                disabled={(page*pageSize)>=total} 
+                onClick={() => setPage(p => p+1)} 
+                className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
-        <div className="p-3 flex justify-end">
-          <QuickFilter value={quick} onChange={setQuick} placeholder="Filter table..." className="w-full md:w-72" />
+        
+        <div className="p-4 border-b">
+          <QuickFilter 
+            value={quick} 
+            onChange={setQuick} 
+            placeholder="Filter names in table..." 
+            className="w-full md:w-80" 
+          />
         </div>
-        <table className="w-full text-left">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 w-12"></th>
-              <th className="p-2">Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {names.filter(n => n.toLowerCase().includes(quick.toLowerCase())).map(n => (
-              <tr key={n} className="border-t">
-                <td className="p-2"><input type="checkbox" checked={!!selected[n]} onChange={e => setSelected(prev => ({ ...prev, [n]: e.target.checked }))} /></td>
-                <td className="p-2 font-medium">{n}</td>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                  <input 
+                    type="checkbox" 
+                    onChange={(e) => {
+                      const checked = e.target.checked
+                      const filtered = names.filter(n => n.toLowerCase().includes(quick.toLowerCase()))
+                      setSelected(prev => {
+                        const newSelected = { ...prev }
+                        filtered.forEach(n => newSelected[n] = checked)
+                        return newSelected
+                      })
+                    }}
+                  />
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Name
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {names.filter(n => n.toLowerCase().includes(quick.toLowerCase())).map(n => (
+                <tr key={n} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    <input 
+                      type="checkbox" 
+                      checked={!!selected[n]} 
+                      onChange={e => setSelected(prev => ({ ...prev, [n]: e.target.checked }))} 
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{n}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
@@ -218,45 +354,129 @@ function UsersTab() {
 
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
-        <button onClick={() => blockOrUnblock(true)} className="px-4 py-2 bg-yellow-600 text-white rounded">Block Selected</button>
-        <button onClick={() => blockOrUnblock(false)} className="px-4 py-2 bg-green-600 text-white rounded">Unblock Selected</button>
-        <button onClick={deleteSelected} className="px-4 py-2 bg-red-600 text-white rounded">Delete Selected</button>
+      {/* User Actions Bar */}
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="flex flex-wrap gap-3">
+          <button 
+            onClick={() => blockOrUnblock(true)} 
+            className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
+          >
+            Block Selected
+          </button>
+          <button 
+            onClick={() => blockOrUnblock(false)} 
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            Unblock Selected
+          </button>
+          <button 
+            onClick={deleteSelected} 
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Delete Selected
+          </button>
+        </div>
       </div>
 
-      <div className="border rounded">
-        <div className="flex items-center justify-between p-3 border-b">
-          <div className="text-sm text-gray-600">Total: {total}</div>
-          <div className="flex gap-2">
-            <button disabled={page<=1} onClick={() => setPage(p => Math.max(1, p-1))} className="px-3 py-1 border rounded disabled:opacity-50">Prev</button>
-            <button disabled={(page*pageSize)>=total} onClick={() => setPage(p => p+1)} className="px-3 py-1 border rounded disabled:opacity-50">Next</button>
+      {/* Users Table */}
+      <div className="bg-white border rounded-lg overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-gray-900">Users Database</h3>
+            <div className="flex gap-2">
+              <button 
+                disabled={page<=1} 
+                onClick={() => setPage(p => Math.max(1, p-1))} 
+                className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
+              >
+                Previous
+              </button>
+              <button 
+                disabled={(page*pageSize)>=total} 
+                onClick={() => setPage(p => p+1)} 
+                className="px-3 py-1 border rounded disabled:opacity-50 hover:bg-gray-100"
+              >
+                Next
+              </button>
+            </div>
           </div>
+          <div className="mt-2 text-sm text-gray-600">Total: {total}</div>
         </div>
-        <div className="p-3 flex justify-end">
-          <QuickFilter value={quick} onChange={setQuick} placeholder="Filter users..." className="w-full md:w-72" />
+        
+        <div className="p-4 border-b">
+          <QuickFilter 
+            value={quick} 
+            onChange={setQuick} 
+            placeholder="Filter users by email..." 
+            className="w-full md:w-80" 
+          />
         </div>
-        <table className="w-full text-left">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="p-2 w-12"></th>
-              <th className="p-2">Email</th>
-              <th className="p-2">Admin</th>
-              <th className="p-2">Blocked</th>
-              <th className="p-2">Last Login</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.filter(u => `${u.email}`.toLowerCase().includes(quick.toLowerCase())).map(u => (
-              <tr key={u.id} className="border-t">
-                <td className="p-2"><input type="checkbox" checked={!!selected[u.id]} onChange={e => setSelected(prev => ({ ...prev, [u.id]: e.target.checked }))} /></td>
-                <td className="p-2 font-medium">{u.email}</td>
-                <td className="p-2">{u.isAdmin ? 'Yes' : 'No'}</td>
-                <td className="p-2">{u.isBlocked ? 'Yes' : 'No'}</td>
-                <td className="p-2">{u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : '-'}</td>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                  <input 
+                    type="checkbox" 
+                    onChange={(e) => {
+                      const checked = e.target.checked
+                      const filtered = users.filter(u => `${u.email}`.toLowerCase().includes(quick.toLowerCase()))
+                      setSelected(prev => {
+                        const newSelected = { ...prev }
+                        filtered.forEach(u => newSelected[u.id] = checked)
+                        return newSelected
+                      })
+                    }}
+                  />
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Admin
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Blocked
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Last Login
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {users.filter(u => `${u.email}`.toLowerCase().includes(quick.toLowerCase())).map(u => (
+                <tr key={u.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    <input 
+                      type="checkbox" 
+                      checked={!!selected[u.id]} 
+                      onChange={e => setSelected(prev => ({ ...prev, [u.id]: e.target.checked }))} 
+                    />
+                  </td>
+                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{u.email}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      u.isAdmin ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {u.isAdmin ? 'Yes' : 'No'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      u.isBlocked ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {u.isBlocked ? 'Yes' : 'No'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-500">
+                    {u.lastLoginAt ? new Date(u.lastLoginAt).toLocaleString() : '-'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
