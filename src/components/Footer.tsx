@@ -76,7 +76,7 @@ export function Footer() {
         <div className="border-t border-gray-800 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm">
-              © 2024 Baby Names. All rights reserved.
+              © 2024 <a href="https://onlinebabynames.com" className="underline hover:text-white">Online Baby Names</a>. All rights reserved.
             </p>
             <p className="text-gray-400 text-sm mt-2 md:mt-0">
               Made with ❤️ for expecting parents

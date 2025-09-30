@@ -29,7 +29,7 @@ export default function AboutUs() {
         
         <title>About Us - Baby Names Analysis</title>
         <meta name="description" content="Learn about our advanced baby name analysis platform that combines numerology, astrology, and phonology to help parents find the perfect name for their child." />
-        <meta name="keywords" content="about baby names, numerology analysis, astrology names, phonology analysis, baby name calculator" />
+        <meta name="keywords" content="about baby names, numerology analysis, astrology names, phonology analysis, baby name calculator, online baby names" />
       </Head>
       
       <div className="min-h-screen bg-gray-50">
@@ -40,6 +40,9 @@ export default function AboutUs() {
           <h1 className="text-4xl font-bold text-gray-900 mb-4">About Us</h1>
           <p className="text-xl text-gray-600">
             Helping parents find the perfect name for their little ones
+          </p>
+          <p className="text-sm text-gray-500 mt-3">
+            Learn more about <a href="https://onlinebabynames.com" className="underline text-blue-600 hover:text-blue-700">Online Baby Names</a> – our platform dedicated to ranking for the keyword "online baby names" and helping families discover meaningful names.
           </p>
         </div>
 
