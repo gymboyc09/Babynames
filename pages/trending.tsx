@@ -3,8 +3,13 @@ import Head from 'next/head'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
 import { TrendingNames } from '@/components/TrendingNames'
+import { NavigationTab } from '@/types'
 
 export default function TrendingPage() {
+  const handleTabChange = (tab: NavigationTab) => {
+    window.location.href = '/'
+  }
+
   return (
     <>
       <Head>
@@ -15,7 +20,7 @@ export default function TrendingPage() {
         <meta property="og:description" content="Explore trending baby names and analyze them with numerology, astrology, and phonology insights." />
       </Head>
       <div className="min-h-screen bg-gray-50">
-        <Header activeTab="trending" onTabChange={() => {}} />
+        <Header activeTab="trending" onTabChange={handleTabChange} />
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Trending Baby Names</h1>

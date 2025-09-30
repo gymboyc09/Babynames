@@ -2,12 +2,18 @@ import React from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { QuickFilter } from '@/components/QuickFilter'
+import { useSession } from 'next-auth/react'
+import { LoginModal } from '@/components/LoginModal'
+import { Heart } from 'lucide-react'
 
 export function TrendingNames() {
   const [names, setNames] = React.useState<string[]>([])
   const [loading, setLoading] = React.useState(false)
   const [sortAsc, setSortAsc] = React.useState(true)
   const [filter, setFilter] = React.useState('')
+  const [favoriteSet, setFavoriteSet] = React.useState<Record<string, boolean>>({})
+  const [loginOpen, setLoginOpen] = React.useState(false)
+  const { data: session } = useSession()
 
   const fetchTrending = React.useCallback(async () => {
     setLoading(true)
@@ -33,6 +39,46 @@ export function TrendingNames() {
   const analyze = (name: string) => {
     const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-')
     window.open(`/calculator/${cleanName}`, '_blank')
+  }
+
+  const toggleFavorite = async (name: string) => {
+    if (!session) {
+      setLoginOpen(true)
+      return
+    }
+    const normalized = name.trim()
+    const isFav = !!favoriteSet[normalized]
+    try {
+      if (isFav) {
+        const response = await fetch('/api/user/favorites', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nameId: normalized })
+        })
+        if (response.ok) {
+          setFavoriteSet(prev => ({ ...prev, [normalized]: false }))
+        }
+      } else {
+        const body = {
+          id: normalized,
+          name: normalized,
+          numerology: { pythagorean: { totalValue: 0, reducedValue: 0, meaning: '', characteristics: [], compatibility: [], warnings: [], letterBreakdown: [] }, chaldean: { totalValue: 0, reducedValue: 0, meaning: '', characteristics: [], compatibility: [], warnings: [], letterBreakdown: [] }, coreNumbers: { lifePath: 0, destiny: 0, soul: 0, personality: 0, radical: 0 } },
+          phonology: { syllables: 0, vowelCount: 0, consonantCount: 0, phoneticAnalysis: '', pronunciation: '', culturalNotes: [], vibrations: { energy: 0, frequency: '', resonance: '', harmony: '', score: 0, rating: '' }, soundPatterns: { alliteration: [], assonance: [], rhythm: '', flow: '' }, vibratoryScience: { positiveCombinations: [], negativeCombinations: [], overallVibration: 'Neutral', avoidableNumbers: [] } },
+          timestamp: new Date(),
+          isFavorite: true
+        }
+        const response = await fetch('/api/user/favorites', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        })
+        if (response.ok) {
+          setFavoriteSet(prev => ({ ...prev, [normalized]: true }))
+        }
+      }
+    } catch (e) {
+      console.error('Error toggling favorite from trending:', e)
+    }
   }
 
   return (
@@ -72,7 +118,17 @@ export function TrendingNames() {
                     <td className="border border-gray-300 px-4 py-2">{i + 1}</td>
                     <td className="border border-gray-300 px-4 py-2 font-medium">{n}</td>
                     <td className="border border-gray-300 px-4 py-2">
-                      <Button variant="outline" size="sm" onClick={() => analyze(n)}>Analyze</Button>
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={() => analyze(n)}>Analyze</Button>
+                        <button
+                          aria-label="Toggle favorite"
+                          className={`p-2 rounded hover:bg-gray-100 ${favoriteSet[n] ? 'text-red-600' : 'text-gray-500'}`}
+                          onClick={() => toggleFavorite(n)}
+                          title={favoriteSet[n] ? 'Remove favorite' : 'Save to favorites'}
+                        >
+                          <Heart className={`h-4 w-4 ${favoriteSet[n] ? 'fill-current' : ''}`} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -80,6 +136,7 @@ export function TrendingNames() {
             </table>
           </div>
         )}
+        <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} message="Please sign in to save trending names to favorites" />
       </CardContent>
     </Card>
   )
