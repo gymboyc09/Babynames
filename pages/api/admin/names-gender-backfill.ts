@@ -16,6 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const batch = parseInt((req.body?.batch as string) || '1000', 10)
-  const result = await backfillNameGenders(isNaN(batch) ? 1000 : batch)
+  const force = Boolean(req.body?.force)
+  const result = await backfillNameGenders(isNaN(batch) ? 1000 : batch, force)
   return res.status(200).json(result)
 }

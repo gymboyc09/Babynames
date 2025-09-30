@@ -291,17 +291,22 @@ export function predictGenderFromName(name: string): 'Boy' | 'Girl' | 'Unisex' {
   if (!name) return 'Unisex';
   const n = name.toLowerCase().trim();
 
+  // Quick overrides by strong prefixes
+  if (n.startsWith('srinivas')) return 'Boy';
+
   // Common female endings/patterns
   const femaleSuffixes = [
-    'a','aa','i','ii','ee','y','iya','ya','iya','ika','ita','isha','eesha','eisha','isha','ika','ika','ita','ita','ika','ini','ani','sri','shree','pri','preet','reet','ritha','ritha','latha','lata','kshi','akshi','aksha','akshita','shika','nika','nika','nita','nitha','ita','eta','ota','ota','rita','ita','vya','aya','ya']
+    'a','aa','i','ii','ee','y','iya','ya','ika','ita','isha','eesha','eisha','ini','ani','sri','shree','pri','preet','reet','latha','lata','kshi','akshi','aksha','akshita','shika','nika','nita','nitha','rita','vya','aya','ya'
+  ];
   
   // Common male endings/patterns
   const maleSuffixes = [
-    'n','an','tan','han','ran','van','yan','vin','esh','eash','eesh','it','ith','rit','raj','rajh','tej','ansh','aansh','yansh','yanshu','vansh','tirth','arth','arthi','veer','vir','raj','rajit','ket','ketu','al','aal','ush','ut','hith','deep','dev','ishan','kumar','karthik','kartik','nath','jeet','meet','preet','pran','prane','pransh','laksh','lakshit','lakshan']
+    'n','an','tan','han','ran','van','yan','vin','esh','eash','eesh','it','ith','rit','raj','tej','ansh','aansh','yansh','yanshu','vansh','tirth','arth','veer','vir','rajit','ket','ketu','dev','ishan','kumar','karthik','kartik','nath','jeet','meet','preet','pran','laksh','lakshit','lakshan'
+  ];
 
   // Strong gender-specific prefixes
-  const femalePrefixes = ['sri', 'shri', 'kumari', 'kanya', 'lady'];
-  const malePrefixes = ['mr', 'shri', 'sri', 'kunal', 'raj'];
+  const femalePrefixes = ['sri ', 'shri ', 'kumari', 'kanya', 'lady'];
+  const malePrefixes = ['mr', 'shri ', 'sri ', 'kunal', 'raj', 'sriniv', 'srinivas'];
 
   if (femalePrefixes.some(p => n.startsWith(p))) return 'Girl';
   if (malePrefixes.some(p => n.startsWith(p))) return 'Boy';
@@ -332,24 +337,72 @@ export async function setNameGender(name: string, gender: 'Boy' | 'Girl' | 'Unis
   }
 }
 
-export async function backfillNameGenders(batchSize: number = 1000): Promise<{ updated: number; remaining: number; }>{
+async function applyGenderOverrides(): Promise<number> {
   try {
     const { db } = await connectToDatabase();
-    const cursor = db.collection('names').find({ $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] }).limit(batchSize);
-    const docs = await cursor.toArray();
-    if (docs.length === 0) {
-      const remaining = await db.collection('names').countDocuments({ $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] });
-      return { updated: 0, remaining };
+    const rules: { regex: RegExp; gender: 'Boy' | 'Girl' | 'Unisex' }[] = [
+      { regex: /^srinivas/i, gender: 'Boy' },
+      { regex: /^srinu/i, gender: 'Boy' },
+    ];
+    let modified = 0;
+    for (const rule of rules) {
+      const res = await db.collection('names').updateMany(
+        { name: { $regex: rule.regex } },
+        { $set: { gender: rule.gender, updatedAt: new Date() } }
+      );
+      modified += res.modifiedCount ?? 0;
     }
-    const ops = docs.map((d: any) => ({
-      updateOne: {
-        filter: { _id: d._id },
-        update: { $set: { gender: predictGenderFromName(d.name), updatedAt: new Date() } }
+    return modified;
+  } catch (e) {
+    console.error('applyGenderOverrides error:', e);
+    return 0;
+  }
+}
+
+export async function backfillNameGenders(batchSize: number = 1000, force: boolean = false): Promise<{ updated: number; remaining: number; overridesApplied?: number }>{
+  try {
+    const { db } = await connectToDatabase();
+
+    let overridesApplied = 0;
+    if (force) {
+      // Apply known overrides first
+      overridesApplied = await applyGenderOverrides();
+    }
+
+    // Select documents to process in this batch
+    const query = force
+      ? {}
+      : { $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] };
+
+    const docs = await db.collection('names')
+      .find(query)
+      .project({ name: 1, gender: 1 })
+      .limit(batchSize)
+      .toArray();
+
+    if (docs.length === 0) {
+      const remainingQuery = force ? {} : { $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] };
+      const remaining = await db.collection('names').countDocuments(remainingQuery);
+      return { updated: 0, remaining, overridesApplied };
+    }
+
+    const ops = docs.map((d: any) => {
+      const predicted = predictGenderFromName(d.name);
+      const shouldUpdate = force ? d.gender !== predicted : !d.gender;
+      if (!shouldUpdate) return null;
+      return {
+        updateOne: {
+          filter: { _id: d._id },
+          update: { $set: { gender: predicted, updatedAt: new Date() } }
+        }
       }
-    }));
-    const res = await db.collection('names').bulkWrite(ops);
-    const remaining = await db.collection('names').countDocuments({ $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] });
-    return { updated: res.modifiedCount ?? 0, remaining };
+    }).filter(Boolean) as any[];
+
+    const res = ops.length > 0 ? await db.collection('names').bulkWrite(ops) : { modifiedCount: 0 } as any;
+
+    const remainingQuery = force ? {} : { $or: [ { gender: { $exists: false } }, { gender: null }, { gender: '' } ] };
+    const remaining = await db.collection('names').countDocuments(remainingQuery);
+    return { updated: res.modifiedCount ?? 0, remaining, overridesApplied };
   } catch (error) {
     console.error('Error backfilling genders:', error);
     return { updated: 0, remaining: 0 };
