@@ -70,6 +70,9 @@ function NamesTab() {
   const [bulkText, setBulkText] = React.useState('')
   const [backfillRunning, setBackfillRunning] = React.useState(false)
   const [backfillInfo, setBackfillInfo] = React.useState<{ updated: number; remaining: number } | null>(null)
+  const [overrideName, setOverrideName] = React.useState('')
+  const [overrideGender, setOverrideGender] = React.useState<'Boy' | 'Girl' | 'Unisex'>('Boy')
+  const [overrideMsg, setOverrideMsg] = React.useState('')
 
   const fetchNames = React.useCallback(async () => {
     const params = new URLSearchParams({ q, mode: String(mode), page: String(page), pageSize: String(pageSize) })
@@ -200,13 +203,48 @@ function NamesTab() {
         <div className="bg-white border rounded-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Gender Tools</h3>
           <p className="text-sm text-gray-600 mb-3">Populate missing genders using intelligent prediction on up to 5,000 names per run.</p>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 mb-4">
             <button onClick={runBackfill} disabled={backfillRunning} className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50">
               {backfillRunning ? 'Running...' : 'Backfill Gender (5000)'}
             </button>
             {backfillInfo && (
               <span className="text-sm text-gray-700">Updated: {backfillInfo.updated}, Remaining: {backfillInfo.remaining}</span>
             )}
+          </div>
+          <div className="border-t pt-4 mt-2">
+            <h4 className="font-semibold mb-2">Manual Override</h4>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
+              <div className="md:col-span-3">
+                <label className="block text-sm text-gray-700 mb-1">Name</label>
+                <input value={overrideName} onChange={e => setOverrideName(e.target.value)} className="w-full border rounded px-3 py-2" placeholder="Enter name e.g. Srinivas" />
+              </div>
+              <div>
+                <label className="block text-sm text-gray-700 mb-1">Gender</label>
+                <select value={overrideGender} onChange={e => setOverrideGender(e.target.value as any)} className="w-full border rounded px-3 py-2">
+                  <option value="Boy">Boy</option>
+                  <option value="Girl">Girl</option>
+                  <option value="Unisex">Unisex</option>
+                </select>
+              </div>
+              <div>
+                <button
+                  onClick={async () => {
+                    setOverrideMsg('')
+                    const resp = await fetch('/api/admin/name-gender-set', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: overrideName, gender: overrideGender }) })
+                    if (resp.ok) {
+                      setOverrideMsg('Saved')
+                      setOverrideName('')
+                    } else {
+                      setOverrideMsg('Failed')
+                    }
+                  }}
+                  className="w-full px-4 py-2 bg-gray-900 text-white rounded hover:bg-black"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+            {overrideMsg && <p className="text-sm text-gray-600 mt-2">{overrideMsg}</p>}
           </div>
         </div>
       </div>
