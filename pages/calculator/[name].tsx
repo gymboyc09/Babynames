@@ -12,6 +12,20 @@ export default function CalculatorPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const handleTabChange = (tab: string) => {
+    if (tab === 'suggestions') {
+      router.push('/');
+    } else if (tab === 'trending') {
+      router.push('/trending');
+    } else if (tab === 'calculator') {
+      // Already on calculator page
+      return;
+    } else {
+      // For other tabs, redirect to home page
+      router.push('/');
+    }
+  };
+
   useEffect(() => {
     if (router.isReady && urlName) {
       const nameParam = urlName as string;
@@ -83,7 +97,7 @@ export default function CalculatorPage() {
         </Head>
         
         <div className="min-h-screen bg-gray-50">
-          <Header activeTab="calculator" onTabChange={() => {}} />
+          <Header activeTab="calculator" onTabChange={handleTabChange} />
           
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="text-center mb-8">
@@ -129,7 +143,7 @@ export default function CalculatorPage() {
         </Head>
         
         <div className="min-h-screen bg-gray-50">
-          <Header activeTab="calculator" onTabChange={() => {}} />
+          <Header activeTab="calculator" onTabChange={handleTabChange} />
           
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="text-center mb-8">
