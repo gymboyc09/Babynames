@@ -30,6 +30,14 @@ export default function CalculatorPage() {
     if (router.isReady && urlName) {
       const nameParam = urlName as string;
       
+      // Set a timeout to prevent infinite loading
+      const timeoutId = setTimeout(() => {
+        console.log('Session validation timeout, using fallback');
+        const decodedName = nameParam.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        setName(decodedName);
+        setLoading(false);
+      }, 5000); // 5 second timeout
+      
       // If we have a session ID, validate it
       if (sessionId) {
         const sessionParam = sessionId as string;
@@ -41,7 +49,10 @@ export default function CalculatorPage() {
           },
           body: JSON.stringify({ sessionId: sessionParam }),
         })
-        .then(response => response.json())
+        .then(response => {
+          clearTimeout(timeoutId);
+          return response.json();
+        })
         .then(data => {
           if (data.valid && data.name) {
             // Verify the name in the URL matches the name in the session
@@ -63,6 +74,7 @@ export default function CalculatorPage() {
           }
         })
         .catch(error => {
+          clearTimeout(timeoutId);
           console.error('Session validation error:', error);
           // Fallback: use the name from URL if session validation fails
           const decodedName = nameParam.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
@@ -71,10 +83,16 @@ export default function CalculatorPage() {
         });
       } else {
         // No session ID, use the name from URL directly
+        clearTimeout(timeoutId);
         const decodedName = nameParam.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
         setName(decodedName);
         setLoading(false);
       }
+      
+      // Cleanup function to clear timeout
+      return () => {
+        clearTimeout(timeoutId);
+      };
     } else if (router.isReady) {
       setError('Missing name parameter');
       setLoading(false);
