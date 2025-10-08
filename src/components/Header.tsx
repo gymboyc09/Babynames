@@ -97,7 +97,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
         </div>
         
         {/* Navigation tabs for desktop */}
-        <div className="hidden md:block border-t border-gray-200 relative overflow-visible">
+        <div className="hidden md:block border-t border-gray-200 relative">
           <nav className="flex items-center space-x-6 overflow-x-auto">
             {/* Home icon */}
             <button
@@ -143,7 +143,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
               
               {isBlogDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
+                <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] pointer-events-auto">
                   <div className="py-2">
                     <a 
                       href="/blog" 
