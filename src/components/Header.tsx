@@ -129,7 +129,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
             ))}
             
-            {/* Blogs dropdown */}
+            {/* Test dropdown */}
             <div 
               className="relative" 
               ref={dropdownRef}
@@ -139,30 +139,32 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               <button
                 className="py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap"
               >
-                Blogs
+                Test
               </button>
               
               {isBlogDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded shadow-lg z-[9999] overflow-hidden">
+                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded shadow-lg z-[9999]">
                   <a 
-                    href="/blog" 
-                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 whitespace-nowrap"
+                    href="#" 
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     onClick={() => setIsBlogDropdownOpen(false)}
                   >
-                    View All Posts
+                    Option 1
                   </a>
-                  {blogPosts.map((post) => (
-                    <a
-                      key={post.slug}
-                      href={`/blog/${post.slug}`}
-                      className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsBlogDropdownOpen(false)}
-                    >
-                      <div className="truncate" title={post.title}>
-                        {post.title}
-                      </div>
-                    </a>
-                  ))}
+                  <a 
+                    href="#" 
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsBlogDropdownOpen(false)}
+                  >
+                    Option 2
+                  </a>
+                  <a 
+                    href="#" 
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsBlogDropdownOpen(false)}
+                  >
+                    Option 3
+                  </a>
                 </div>
               )}
             </div>
