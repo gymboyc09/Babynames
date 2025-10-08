@@ -43,19 +43,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
     onTabChange('suggestions');
   };
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsBlogDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  // No need for click outside handler since we're using hover
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -142,9 +130,13 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
             ))}
             
             {/* Blogs dropdown */}
-            <div className="relative" ref={dropdownRef}>
+            <div 
+              className="relative" 
+              ref={dropdownRef}
+              onMouseEnter={() => setIsBlogDropdownOpen(true)}
+              onMouseLeave={() => setIsBlogDropdownOpen(false)}
+            >
               <button
-                onClick={() => setIsBlogDropdownOpen(!isBlogDropdownOpen)}
                 className="py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap flex items-center space-x-1"
               >
                 <span>Blogs</span>
@@ -155,18 +147,18 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   <div className="p-4">
                     <div className="mb-3">
-                      <Link 
+                      <a 
                         href="/blog" 
                         className="text-sm font-medium text-blue-600 hover:text-blue-800"
                         onClick={() => setIsBlogDropdownOpen(false)}
                       >
                         View All Posts
-                      </Link>
+                      </a>
                     </div>
                     <div className="space-y-3">
                       {blogPosts.map((post) => (
                         <div key={post.slug} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
-                          <Link
+                          <a
                             href={`/blog/${post.slug}`}
                             className="block hover:bg-gray-50 p-2 rounded transition-colors"
                             onClick={() => setIsBlogDropdownOpen(false)}
@@ -177,7 +169,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                             <p className="text-xs text-gray-600 line-clamp-2">
                               {post.excerpt}
                             </p>
-                          </Link>
+                          </a>
                         </div>
                       ))}
                     </div>
