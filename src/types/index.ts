@@ -107,4 +107,16 @@ export interface UserData {
   updatedAt: Date;
 }
 
-export type NavigationTab = 'calculator' | 'suggestions' | 'trending' | 'favorites' | 'history' | 'astrology' | 'settings';
+export type NavigationTab = 'calculator' | 'suggestions' | 'trending' | 'favorites' | 'history' | 'astrology' | 'settings' | 'blog';
+
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  publishedAt: Date;
+  author: string;
+  tags: string[];
+  featured: boolean;
+}

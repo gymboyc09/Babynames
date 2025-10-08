@@ -14,6 +14,7 @@ export function MobileNavigation({ activeTab, onTabChange }: MobileNavigationPro
     { id: 'calculator', label: 'Calculator', icon: '🧮' },
     { id: 'suggestions', label: 'Find', icon: '🔍' },
     { id: 'trending', label: 'Trending', icon: '📈' },
+    { id: 'blog', label: 'Blogs', icon: '📝' },
     { id: 'favorites', label: 'Favorites', icon: '❤️', requiresAuth: true },
     { id: 'history', label: 'History', icon: '📚', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', icon: '⭐', requiresAuth: true },
@@ -32,6 +33,8 @@ export function MobileNavigation({ activeTab, onTabChange }: MobileNavigationPro
             onClick={() => {
               if (tab.id === 'trending') {
                 window.location.href = '/trending';
+              } else if (tab.id === 'blog') {
+                window.location.href = '/blog';
               } else {
                 onTabChange(tab.id);
               }

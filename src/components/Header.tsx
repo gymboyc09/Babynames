@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSession, signOut, signIn } from 'next-auth/react';
 import { Button } from './ui/button';
 import { NavigationTab } from '@/types';
 import { AnimatedHeadline } from './AnimatedHeadline';
 import Image from 'next/image';
-import { Home } from 'lucide-react';
+import { Home, ChevronDown } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: NavigationTab;
@@ -13,6 +13,8 @@ interface HeaderProps {
 
 export function Header({ activeTab, onTabChange }: HeaderProps) {
   const { data: session } = useSession();
+  const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const allTabs: { id: NavigationTab; label: string; requiresAuth?: boolean }[] = [
     { id: 'suggestions', label: 'Find Names' },
@@ -27,10 +29,32 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   // Filter tabs based on authentication status
   const tabs = allTabs.filter(tab => !tab.requiresAuth || session);
 
+  const blogPosts = [
+    {
+      title: 'How to Choose the Perfect Baby Name for Your Girl or Boy',
+      slug: 'how-to-choose-perfect-baby-name',
+      excerpt: 'Discover the art of choosing the perfect baby name using astrology, numerology, and phonology.'
+    }
+  ];
+
   const handleHomeClick = () => {
     // Navigate to homepage by changing to the default tab (suggestions)
     onTabChange('suggestions');
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsBlogDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -115,6 +139,51 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 {tab.label}
               </button>
             ))}
+            
+            {/* Blogs dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsBlogDropdownOpen(!isBlogDropdownOpen)}
+                className="py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap flex items-center space-x-1"
+              >
+                <span>Blogs</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${isBlogDropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isBlogDropdownOpen && (
+                <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                  <div className="p-4">
+                    <div className="mb-3">
+                      <a 
+                        href="/blog" 
+                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                        onClick={() => setIsBlogDropdownOpen(false)}
+                      >
+                        View All Posts
+                      </a>
+                    </div>
+                    <div className="space-y-3">
+                      {blogPosts.map((post) => (
+                        <div key={post.slug} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
+                          <a
+                            href={`/blog/${post.slug}`}
+                            className="block hover:bg-gray-50 p-2 rounded transition-colors"
+                            onClick={() => setIsBlogDropdownOpen(false)}
+                          >
+                            <h4 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2">
+                              {post.title}
+                            </h4>
+                            <p className="text-xs text-gray-600 line-clamp-2">
+                              {post.excerpt}
+                            </p>
+                          </a>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </nav>
         </div>
       </div>

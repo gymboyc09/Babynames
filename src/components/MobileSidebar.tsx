@@ -19,6 +19,7 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
     { id: 'suggestions', label: 'Find Names', icon: '🔍' },
     { id: 'calculator', label: 'Calculator', icon: '🧮' },
     { id: 'trending', label: 'Trending', icon: '📈' },
+    { id: 'blog', label: 'Blogs', icon: '📝' },
     { id: 'favorites', label: 'Favorites', icon: '❤️', requiresAuth: true },
     { id: 'history', label: 'History', icon: '📚', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', icon: '⭐', requiresAuth: true },
@@ -31,6 +32,8 @@ export function MobileSidebar({ activeTab, onTabChange, isOpen, onToggle }: Mobi
   const handleTabClick = (tab: NavigationTab) => {
     if (tab === 'trending') {
       window.location.href = '/trending';
+    } else if (tab === 'blog') {
+      window.location.href = '/blog';
     } else {
       onTabChange(tab);
     }
