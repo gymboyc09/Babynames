@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { NavigationTab } from '@/types';
 import { AnimatedHeadline } from './AnimatedHeadline';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Home, ChevronDown } from 'lucide-react';
 
 interface HeaderProps {
@@ -154,18 +155,18 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                 <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   <div className="p-4">
                     <div className="mb-3">
-                      <a 
+                      <Link 
                         href="/blog" 
                         className="text-sm font-medium text-blue-600 hover:text-blue-800"
                         onClick={() => setIsBlogDropdownOpen(false)}
                       >
                         View All Posts
-                      </a>
+                      </Link>
                     </div>
                     <div className="space-y-3">
                       {blogPosts.map((post) => (
                         <div key={post.slug} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
-                          <a
+                          <Link
                             href={`/blog/${post.slug}`}
                             className="block hover:bg-gray-50 p-2 rounded transition-colors"
                             onClick={() => setIsBlogDropdownOpen(false)}
@@ -176,7 +177,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
                             <p className="text-xs text-gray-600 line-clamp-2">
                               {post.excerpt}
                             </p>
-                          </a>
+                          </Link>
                         </div>
                       ))}
                     </div>
