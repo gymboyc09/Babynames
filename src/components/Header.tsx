@@ -97,7 +97,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
         </div>
         
         {/* Navigation tabs for desktop */}
-        <div className="hidden md:block border-t border-gray-200">
+        <div className="hidden md:block border-t border-gray-200 relative">
           <nav className="flex items-center space-x-6 overflow-x-auto">
             {/* Home icon */}
             <button
@@ -133,8 +133,14 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
             <div 
               className="relative" 
               ref={dropdownRef}
-              onMouseEnter={() => setIsBlogDropdownOpen(true)}
-              onMouseLeave={() => setIsBlogDropdownOpen(false)}
+              onMouseEnter={() => {
+                console.log('Mouse entered blogs dropdown');
+                setIsBlogDropdownOpen(true);
+              }}
+              onMouseLeave={() => {
+                console.log('Mouse left blogs dropdown');
+                setIsBlogDropdownOpen(false);
+              }}
             >
               <button
                 className="py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap flex items-center space-x-1"
@@ -144,7 +150,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
               
               {isBlogDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                <div className="absolute top-full left-0 mt-1 w-80 bg-white border-2 border-red-500 rounded-lg shadow-lg z-[9999]">
                   <div className="p-4">
                     <div className="mb-3">
                       <a 
