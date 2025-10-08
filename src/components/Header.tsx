@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSession, signOut, signIn } from 'next-auth/react';
 import { Button } from './ui/button';
 import { NavigationTab } from '@/types';
 import { AnimatedHeadline } from './AnimatedHeadline';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Home, ChevronDown } from 'lucide-react';
+import { Home } from 'lucide-react';
 
 interface HeaderProps {
   activeTab: NavigationTab;
@@ -14,12 +14,6 @@ interface HeaderProps {
 
 export function Header({ activeTab, onTabChange }: HeaderProps) {
   const { data: session } = useSession();
-  const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  
-  // Stable dropdown handlers to prevent flickering
-  const handleMouseEnter = useMemo(() => () => setIsBlogDropdownOpen(true), []);
-  const handleMouseLeave = useMemo(() => () => setIsBlogDropdownOpen(false), []);
 
   const allTabs: { id: NavigationTab; label: string; requiresAuth?: boolean }[] = useMemo(() => [
     { id: 'suggestions', label: 'Find Names' },
@@ -34,13 +28,6 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   // Filter tabs based on authentication status
   const tabs = useMemo(() => allTabs.filter(tab => !tab.requiresAuth || session), [allTabs, session]);
 
-  const blogPosts = useMemo(() => [
-    {
-      title: 'How to Choose the Perfect Baby Name',
-      slug: 'how-to-choose-perfect-baby-name',
-      excerpt: 'Discover the art of choosing the perfect baby name using astrology, numerology, and phonology.'
-    }
-  ], []);
 
   const handleHomeClick = () => {
     // Navigate to homepage by changing to the default tab (suggestions)
@@ -133,45 +120,13 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
             ))}
             
-            {/* Test dropdown */}
-            <div 
-              className="relative" 
-              ref={dropdownRef}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
+            {/* Blogs link */}
+            <a
+              href="/blog"
+              className="py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap"
             >
-              <button
-                className="py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap"
-              >
-                Test
-              </button>
-              
-              {isBlogDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-gray-200 rounded shadow-lg z-[9999]">
-                  <a 
-                    href="#" 
-                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsBlogDropdownOpen(false)}
-                  >
-                    Option 1
-                  </a>
-                  <a 
-                    href="#" 
-                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsBlogDropdownOpen(false)}
-                  >
-                    Option 2
-                  </a>
-                  <a 
-                    href="#" 
-                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsBlogDropdownOpen(false)}
-                  >
-                    Option 3
-                  </a>
-                </div>
-              )}
-            </div>
+              Blogs
+            </a>
           </nav>
         </div>
       </div>
