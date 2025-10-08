@@ -50,7 +50,7 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
           </nav>
 
           <article className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="p-8">
+            <div className="p-8 md:p-12">
               {/* Article Header */}
               <header className="mb-8">
                 <div className="flex items-center text-sm text-gray-500 mb-4">
@@ -81,7 +81,7 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
 
               {/* Article Content */}
               <div 
-                className="prose prose-lg max-w-none"
+                className="prose prose-lg max-w-none prose-headings:text-gray-900 prose-headings:font-bold prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8 prose-h2:text-2xl prose-h2:mb-4 prose-h2:mt-8 prose-h3:text-xl prose-h3:mb-3 prose-h3:mt-6 prose-p:text-gray-700 prose-p:mb-4 prose-p:leading-relaxed prose-strong:text-gray-900 prose-strong:font-semibold prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline prose-ul:my-4 prose-li:mb-2 prose-li:text-gray-700 prose-li:leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
             </div>
@@ -159,10 +159,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         <p>The most powerful approach to naming is to combine these three elements—astrology, numerology, and phonology—creating a comprehensive framework. This ensures the name supports the child's cosmic energies, vibrational balance, and social ease.</p>
 
         <p>For example, when choosing <strong>boy baby names</strong> like <a href="https://onlinebabynames.com/calculator/advik">Advik</a> or <a href="https://onlinebabynames.com/calculator/kabir">Kabir</a>, or <strong>unique girl names</strong> such as <a href="https://onlinebabynames.com/calculator/bhavika">Bhavika</a>, start by:</p>
+        
         <ul>
-            <li>Finding suitable syllables based on Nakshatra and Rashi,</li>
-            <li>Calculating the numerology number,</li>
-            <li>Checking the name's sound and pronunciation.</li>
+            <li><strong>Finding suitable syllables</strong> based on Nakshatra and Rashi</li>
+            <li><strong>Calculating the numerology number</strong> for vibrational balance</li>
+            <li><strong>Checking the name's sound</strong> and pronunciation for phonology</li>
         </ul>
         <p>This method ensures the name's overall positive impact on your child's future.</p>
 
@@ -193,13 +194,15 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         <p>Our growing database offers thousands of names with detailed analysis through easy navigation.</p>
 
         <h2>Tips for Choosing the Right Baby Name</h2>
+        <p>Here are some essential guidelines to help you select the perfect name for your child:</p>
+        
         <ul>
-            <li>Consider the <strong>baby boy name</strong> or <strong>baby girl name</strong> starting syllables dictated by astrology.</li>
-            <li>Opt for names with auspicious or positive meanings.</li>
-            <li>Use numerology to ensure the vibrational number supports your child's destiny.</li>
-            <li>Keep phonology in mind for ease of pronunciation and harmonious sound.</li>
-            <li>Explore family traditions and cultural significance.</li>
-            <li>Avoid names associated with negative influences or sounds.</li>
+            <li><strong>Astrological Alignment:</strong> Consider the <strong>baby boy name</strong> or <strong>baby girl name</strong> starting syllables dictated by astrology and Nakshatra</li>
+            <li><strong>Positive Meanings:</strong> Opt for names with auspicious or positive meanings that reflect your values</li>
+            <li><strong>Numerology Balance:</strong> Use numerology to ensure the vibrational number supports your child's destiny</li>
+            <li><strong>Phonological Harmony:</strong> Keep phonology in mind for ease of pronunciation and harmonious sound</li>
+            <li><strong>Cultural Significance:</strong> Explore family traditions and cultural significance</li>
+            <li><strong>Avoid Negative Influences:</strong> Stay away from names associated with negative influences or harsh sounds</li>
         </ul>
 
         <h2>Tamil and Muslim Baby Names</h2>
@@ -209,16 +212,19 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
         <h2>How to Use OnlineBabyNames.com to Find the Perfect Name</h2>
         <p>Visit the <a href="https://onlinebabynames.com/">Home Page</a> to start exploring names based on astrology, numerology, and phonology. Use the search and filtering options to narrow down to names that:</p>
+        
         <ul>
-            <li>Match your child's Nakshatra,</li>
-            <li>Have auspicious numerology numbers,</li>
-            <li>Sound pleasant and culturally appropriate.</li>
+            <li><strong>Match your child's Nakshatra</strong> for astrological alignment</li>
+            <li><strong>Have auspicious numerology numbers</strong> for positive energy</li>
+            <li><strong>Sound pleasant and culturally appropriate</strong> for social harmony</li>
         </ul>
+        
         <p>Click on any name, for example, <a href="https://onlinebabynames.com/calculator/aarav">Aarav</a>, to see a detailed personalized report including:</p>
+        
         <ul>
-            <li>Numerology score,</li>
-            <li>Astrology details aligned with birth data,</li>
-            <li>Phonetic and pronunciation guide.</li>
+            <li><strong>Numerology Score:</strong> Complete vibrational analysis</li>
+            <li><strong>Astrology Details:</strong> Aligned with birth data and cosmic influences</li>
+            <li><strong>Phonetic Guide:</strong> Pronunciation and sound analysis</li>
         </ul>
         <p>Use our <a href="https://onlinebabynames.com/trending">Trending Names Page</a> for inspiration on the most popular and unique names.</p>
 
