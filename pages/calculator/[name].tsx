@@ -4,7 +4,6 @@ import Head from 'next/head';
 import { NumerologyCalculator } from '@/components/NumerologyCalculator';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
-import { PromotionalBanner } from '@/components/PromotionalBanner';
 
 export default function CalculatorPage() {
   const router = useRouter();
@@ -165,9 +164,6 @@ export default function CalculatorPage() {
           <Header activeTab="calculator" onTabChange={handleTabChange} />
           
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {/* Promotional Banner */}
-            <PromotionalBanner />
-            
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-4">
                 Baby Name Analysis Calculator
