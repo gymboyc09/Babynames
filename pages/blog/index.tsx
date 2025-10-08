@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { BlogPost } from '../../src/types';
 
 interface BlogPageProps {
-  posts: BlogPost[];
+  posts: (Omit<BlogPost, 'publishedAt'> & { publishedAt: string })[];
 }
 
 export default function BlogPage({ posts }: BlogPageProps) {
@@ -125,9 +125,15 @@ export const getStaticProps: GetStaticProps = async () => {
     }
   ];
 
+  // Convert Date objects to ISO strings for serialization
+  const serializedPosts = posts.map(post => ({
+    ...post,
+    publishedAt: post.publishedAt.toISOString()
+  }));
+
   return {
     props: {
-      posts
+      posts: serializedPosts
     },
     revalidate: 3600 // Revalidate every hour
   };
