@@ -144,7 +144,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
               
               {isBlogDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] max-h-96 overflow-y-auto">
+                <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
                   <div className="p-4">
                     <div className="mb-3">
                       <a 
