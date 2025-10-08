@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { ChevronUp, ChevronDown } from 'lucide-react';
 
 export function PromotionalBanner() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
 
   const handleClick = () => {
-    // Navigate to the blog post
-    window.location.href = '/blog/how-to-choose-perfect-baby-name';
+    // Navigate to the blog post using Next.js router
+    router.push('/blog/how-to-choose-perfect-baby-name');
   };
 
   return (
