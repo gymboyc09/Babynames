@@ -1,13 +1,24 @@
 import { GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { BlogPost } from '../../src/types';
+import { useState } from 'react';
+import { Header } from '../../src/components/Header';
+import { MobileSidebar } from '../../src/components/MobileSidebar';
+import { Footer } from '../../src/components/Footer';
+import { BlogPost, NavigationTab } from '../../src/types';
 
 interface BlogPageProps {
   posts: (Omit<BlogPost, 'publishedAt'> & { publishedAt: string })[];
 }
 
 export default function BlogPage({ posts }: BlogPageProps) {
+  const [activeTab, setActiveTab] = useState<NavigationTab>('blog');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const handleTabChange = (tab: NavigationTab) => {
+    setActiveTab(tab);
+  };
+
   return (
     <>
       <Head>
@@ -37,6 +48,13 @@ export default function BlogPage({ posts }: BlogPageProps) {
       </Head>
 
       <div className="min-h-screen bg-gray-50">
+        <Header activeTab={activeTab} onTabChange={handleTabChange} />
+        <MobileSidebar 
+          activeTab={activeTab} 
+          onTabChange={handleTabChange}
+          isOpen={mobileSidebarOpen}
+          onToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+        />
         <div className="max-w-4xl mx-auto px-4 py-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
@@ -104,6 +122,7 @@ export default function BlogPage({ posts }: BlogPageProps) {
             </div>
           )}
         </div>
+        <Footer />
       </div>
     </>
   );

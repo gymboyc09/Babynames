@@ -1,13 +1,24 @@
 import { GetStaticProps, GetStaticPaths } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { BlogPost } from '../../src/types';
+import { useState } from 'react';
+import { Header } from '../../src/components/Header';
+import { MobileSidebar } from '../../src/components/MobileSidebar';
+import { Footer } from '../../src/components/Footer';
+import { BlogPost, NavigationTab } from '../../src/types';
 
 interface BlogPostPageProps {
   post: Omit<BlogPost, 'publishedAt'> & { publishedAt: string };
 }
 
 export default function BlogPostPage({ post }: BlogPostPageProps) {
+  const [activeTab, setActiveTab] = useState<NavigationTab>('blog');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const handleTabChange = (tab: NavigationTab) => {
+    setActiveTab(tab);
+  };
+
   return (
     <>
       <Head>
@@ -37,6 +48,13 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
       </Head>
 
       <div className="min-h-screen bg-gray-50">
+        <Header activeTab={activeTab} onTabChange={handleTabChange} />
+        <MobileSidebar 
+          activeTab={activeTab} 
+          onTabChange={handleTabChange}
+          isOpen={mobileSidebarOpen}
+          onToggle={() => setMobileSidebarOpen(!mobileSidebarOpen)}
+        />
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Breadcrumb */}
           <nav className="mb-8">
@@ -100,6 +118,7 @@ export default function BlogPostPage({ post }: BlogPostPageProps) {
             </Link>
           </div>
         </div>
+        <Footer />
       </div>
     </>
   );
