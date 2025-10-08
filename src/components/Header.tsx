@@ -144,35 +144,25 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
               
               {isBlogDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
-                  <div className="p-4">
-                    <div className="mb-3">
-                      <a 
-                        href="/blog" 
-                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999]">
+                  <div className="py-2">
+                    <a 
+                      href="/blog" 
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsBlogDropdownOpen(false)}
+                    >
+                      View All Posts
+                    </a>
+                    {blogPosts.map((post) => (
+                      <a
+                        key={post.slug}
+                        href={`/blog/${post.slug}`}
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         onClick={() => setIsBlogDropdownOpen(false)}
                       >
-                        View All Posts
+                        {post.title}
                       </a>
-                    </div>
-                    <div className="space-y-3">
-                      {blogPosts.map((post) => (
-                        <div key={post.slug} className="border-b border-gray-100 last:border-b-0 pb-3 last:pb-0">
-                          <a
-                            href={`/blog/${post.slug}`}
-                            className="block hover:bg-gray-50 p-2 rounded transition-colors"
-                            onClick={() => setIsBlogDropdownOpen(false)}
-                          >
-                            <h4 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2">
-                              {post.title}
-                            </h4>
-                            <p className="text-xs text-gray-600 line-clamp-2">
-                              {post.excerpt}
-                            </p>
-                          </a>
-                        </div>
-                      ))}
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
