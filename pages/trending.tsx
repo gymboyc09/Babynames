@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Head from 'next/head'
 import { Header } from '@/components/Header'
 import { MobileSidebar } from '@/components/MobileSidebar'
-import { MobileNavigation } from '@/components/MobileNavigation'
 import { Footer } from '@/components/Footer'
 import { TrendingNames } from '@/components/TrendingNames'
 import { NavigationTab } from '@/types'
@@ -53,7 +52,6 @@ export default function TrendingPage() {
             Last updated: {oneDayAgo}
           </div>
         </main>
-        <MobileNavigation activeTab="trending" onTabChange={handleTabChange} />
         <Footer />
       </div>
     </>
