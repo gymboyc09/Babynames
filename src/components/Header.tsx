@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useSession, signOut, signIn } from 'next-auth/react';
 import { Button } from './ui/button';
 import { NavigationTab } from '@/types';
@@ -16,8 +16,12 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
   const { data: session } = useSession();
   const [isBlogDropdownOpen, setIsBlogDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Stable dropdown handlers to prevent flickering
+  const handleMouseEnter = useMemo(() => () => setIsBlogDropdownOpen(true), []);
+  const handleMouseLeave = useMemo(() => () => setIsBlogDropdownOpen(false), []);
 
-  const allTabs: { id: NavigationTab; label: string; requiresAuth?: boolean }[] = [
+  const allTabs: { id: NavigationTab; label: string; requiresAuth?: boolean }[] = useMemo(() => [
     { id: 'suggestions', label: 'Find Names' },
     { id: 'calculator', label: 'Calculator' },
     { id: 'trending', label: 'Trending' },
@@ -25,18 +29,18 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
     { id: 'history', label: 'History', requiresAuth: true },
     { id: 'astrology', label: 'Astrology', requiresAuth: true },
     { id: 'settings', label: 'Settings', requiresAuth: true }
-  ];
+  ], []);
   
   // Filter tabs based on authentication status
-  const tabs = allTabs.filter(tab => !tab.requiresAuth || session);
+  const tabs = useMemo(() => allTabs.filter(tab => !tab.requiresAuth || session), [allTabs, session]);
 
-  const blogPosts = [
+  const blogPosts = useMemo(() => [
     {
       title: 'How to Choose the Perfect Baby Name',
       slug: 'how-to-choose-perfect-baby-name',
       excerpt: 'Discover the art of choosing the perfect baby name using astrology, numerology, and phonology.'
     }
-  ];
+  ], []);
 
   const handleHomeClick = () => {
     // Navigate to homepage by changing to the default tab (suggestions)
@@ -133,8 +137,8 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
             <div 
               className="relative" 
               ref={dropdownRef}
-              onMouseEnter={() => setIsBlogDropdownOpen(true)}
-              onMouseLeave={() => setIsBlogDropdownOpen(false)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               <button
                 className="py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap"
