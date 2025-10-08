@@ -32,7 +32,7 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
 
   const blogPosts = [
     {
-      title: 'How to Choose the Perfect Baby Name for Your Girl or Boy',
+      title: 'How to Choose the Perfect Baby Name',
       slug: 'how-to-choose-perfect-baby-name',
       excerpt: 'Discover the art of choosing the perfect baby name using astrology, numerology, and phonology.'
     }
@@ -143,26 +143,26 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
               </button>
               
               {isBlogDropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] pointer-events-auto">
-                  <div className="py-2">
-                    <a 
-                      href="/blog" 
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                <div className="absolute top-full left-0 mt-1 w-80 bg-white border border-gray-200 rounded shadow-lg z-[9999] overflow-hidden">
+                  <a 
+                    href="/blog" 
+                    className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 whitespace-nowrap"
+                    onClick={() => setIsBlogDropdownOpen(false)}
+                  >
+                    View All Posts
+                  </a>
+                  {blogPosts.map((post) => (
+                    <a
+                      key={post.slug}
+                      href={`/blog/${post.slug}`}
+                      className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       onClick={() => setIsBlogDropdownOpen(false)}
                     >
-                      View All Posts
-                    </a>
-                    {blogPosts.map((post) => (
-                      <a
-                        key={post.slug}
-                        href={`/blog/${post.slug}`}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        onClick={() => setIsBlogDropdownOpen(false)}
-                      >
+                      <div className="truncate" title={post.title}>
                         {post.title}
-                      </a>
-                    ))}
-                  </div>
+                      </div>
+                    </a>
+                  ))}
                 </div>
               )}
             </div>
