@@ -43,7 +43,7 @@ export function TrendingNames() {
 
   const analyze = (name: string) => {
     const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-')
-    window.open(`/calculator/${cleanName}`, '_blank')
+    window.location.href = `/calculator/${cleanName}`
   }
 
   const toggleFavorite = async (name: string) => {

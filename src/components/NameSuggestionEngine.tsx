@@ -62,16 +62,16 @@ export function NameSuggestionEngine() {
       
       if (response.ok && data.sessionId && data.cleanName) {
         const url = `/calculator/${data.cleanName}?s=${data.sessionId}`;
-        window.open(url, '_blank');
+        window.location.href = url;
       } else {
         const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
         const url = `/calculator/${cleanName}`;
-        window.open(url, '_blank');
+        window.location.href = url;
       }
     } catch (error) {
       const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-');
       const url = `/calculator/${cleanName}`;
-      window.open(url, '_blank');
+      window.location.href = url;
     }
   };
 
